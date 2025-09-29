@@ -1,0 +1,14 @@
+﻿/* Style buttons */
+.buttonload {
+    background-color: #2ACAEA; /* Green background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 8px 16px; /* Some padding */
+    font-size: 16px; /* Set a font size */
+    border-radius: .25rem
+}
+/* Add a right margin to each icon */
+.fa {
+    margin-left: -12px;
+    margin-right: 8px;
+}

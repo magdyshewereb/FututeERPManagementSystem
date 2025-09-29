@@ -1,0 +1,23 @@
+﻿table, td {
+    padding: 0;
+    vertical-align: baseline;
+    font-family: Geneva, Verdana, sans-serif;
+}
+th {
+    /*font-weight: 200 !important;*/
+}
+tr {
+    /*font-size: small;*/
+}
+.form-control {
+    /*padding: 0;*/
+    vertical-align: baseline;
+    font-size: 15px;
+}
+.form-select {
+    /*padding: 0 2.25rem 0 0;*/
+}
+td > button{
+    border:0;
+    padding:0;
+}

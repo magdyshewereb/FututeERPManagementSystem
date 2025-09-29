@@ -1,0 +1,78 @@
+﻿@page "/FrmSafeOutRequest"
+@using System.Data;
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.Accounting;
+@using ERPManagement.UI.DataModels.Accounting.MasterData
+@using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
+@using ERPManagement.UI.DataModels.Defaults
+@using ERPManagement.UI.DataModels.Privilege
+@using ERPManagement.UI.DataModels.SafesAndBanks
+@using ERPManagement.UI.DataModels.SafesAndBanks;
+@inject IStringLocalizer<FrmSafeOutRequest> localizer;
+@inject ERPManagement.UI.DataModels.SafesAndBanks.SafeOutRequestsService safeOuRequestService
+@inject ERPManagement.UI.DataModels.SafesAndBanks.SafeOutRequestDetailsService safeOuRequestDetailsService
+@inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsService subAccountsService
+@inject CurrencyService currencyService;
+@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject ERPManagement.UI.DataModels.Accounting.FiscalYearService fiscalYearService
+@inject ERPManagement.UI.DataModels.Defaults.JVDefaultsService jvDefaultService
+@inject ERPManagement.UI.DataModels.Privilege.SearchPeriodService searchPeriodService
+@inject ERPManagement.UI.DataModels.Privilege.SearchColumnsService searchColumnService
+@attribute [Authorize(Roles = "ERP.SafesAndBanks.SafeTransactions.frmSafeOutRequest")]
+
+
+<FrmHeaderDetails TItem="SafeOutRequests" TItemDetails="SafeOutRequestDetails" DrMaster="@drMaster" DateCol="SafeOutRequestDate" IDCol="SafeOutRequestID" NoCol="SafeOutRequestNo" TableName="SB_SafeOutRequests"
+                  FormName="SafeOutRequests" FormFullName="ERP.SafesAndBanks.SafeTransactions.frmSafeOutRequest" DetailsInvisibleColumns="@SafeOutRequestDetailsInvisibleColumns" dtSearch="dtSafeOutRequests"
+                  localizer="@localizer" lstSearchWidth=lstSearchWidth OnCancelCallBack="Cancel" OnClearControlsCallback="ClearControls"
+                  OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" SearchFun="btnSearchClick" valueLists="valueLists"
+                  InfoMessage="@InfoMessage" IsInfoMBVisible="@IsInfoMBVisible" MBType="@MBType" lstDetailGridWidth="lstDetailGridWidth" IsSearchMDVisible="@IsSearchMDVisible"
+                  RowID="@RowID" ItemObj="@safeOutRequestObj" lstDetails="@lstSafeOutRequestDetails" OnSearchDubleClickCallback="FillData" OnSearchOkCallback="FillData"
+                  ds="ds" isNavMode="@isNavMode" lstFilters="lstFilters" QuesMessage="@QuesMessage" AddFun="Add" OnDeleteCallBack="Delete">
+    <HeaderContent>
+           @* -- Header Data *@ 
+        <div class="form-inline row">
+            <label id="BankInDate" class="@GlobalVariables.LabelClass col-sm-1">@localizer["BankInDate"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="BankInDate" type="date" @bind=safeOutRequestObj.SafeOutRequestDate readonly="@isNavMode" />
+            </div>
+        </div>
+
+        <div class="form-inline row">
+            <label id="CurrencyID" class="@GlobalVariables.LabelClass col-sm-1">@localizer["CurrencyID"]</label>
+            <div class="col-sm-2">
+                <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="CurrencyID" @bind="safeOutRequestObj.CurrencyID" disabled="@isNavMode">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtCurrency.Rows)
+                    {
+                        <option value="@item["CurrencyID"]"> @item["CurrencyName"]</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-inline row" >
+            <label id="Notes" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Notes"]</label>
+            <div class="col-sm-5">
+                <textarea cols="2" class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="JVDate" @bind=safeOutRequestObj.Notes readonly="@isNavMode" />
+            </div>
+        </div>
+     </HeaderContent>
+     <FooterContent>
+ @* -- Header Data Summary *@
+@*         <div class="form-inline row">
+            <label id="Total" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Total"]</label>
+        <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Total" type="text" @bind-value=bankInObj.Total readonly="@isNavMode" />
+        </div>
+            <label id="SenderBankExpense" class="@GlobalVariables.LabelClass col-sm-1">@localizer["SenderBankExpense"]</label>
+        <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="SenderBankExpense" type="text" @bind-value=bankInObj.SenderBankExpense readonly="@isNavMode" />
+        </div>
+        <label id="Diff" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Diff"]</label>
+        <div class="col-sm-2">
+            <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Diff" type="text" @bind-value=diff readonly="@isNavMode" />
+        </div>
+    </div> *@
+     </FooterContent>
+</FrmHeaderDetails>

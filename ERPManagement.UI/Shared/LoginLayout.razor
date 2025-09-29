@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<div class="container-fluid vh-100 d-flex justify-content-center align-items-center bg-theme"
+     style="overflow: hidden;">
+
+    <div class="row w-75">
+        <!-- صورة -->
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <img src="/img/BAR_WEB_LOGO.png"
+                 class="img-fluid rounded-circle shadow"
+                 style="max-width: 300px; max-height: 300px; object-fit: cover;" />
+        </div>
+
+        <!-- الكارد -->
+        <div class="col-6 d-flex align-items-center">
+            <div class="card shadow-lg w-100 p-4 theme-card"
+                 style="border: groove; border-radius: 15px;">
+                @Body
+            </div>
+        </div>
+    </div>
+</div>

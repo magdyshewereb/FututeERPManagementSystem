@@ -1,0 +1,45 @@
+﻿@using ERPManagement.UI.GeneralClasses
+@typeparam TItem
+@typeparam Tlevel
+@*@inject IStringLocalizer<TItem> localizer;*@
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+
+
+ <div style=" display:flow-root">
+    <Buttons BtnAddRootClickFun="BtnAddRootClick" BtnAddClickFun="BtnAddClick" BtnUpdateClickFun="BtnUpdateClick" BtnDeleteClickFun="BtnDeleteClick" OnCancelCallback="BtnCancel" 
+           ValidateDataFun="ValidateData" AddFun="SaveData" OnDeleteCallback="TreeDeleteData" UpdateFun="SaveData" SearchCode="@SearchCode" OnClearControlsCallback="ClearControls"
+             OnChangeStateCallback="ChangeNavMode" OnConfirmCallback="ConfirmData" formName="@localizer["FormName"]" hiddenButtons="@hiddenButtons"   />
+</div>
+    <br />
+    <div class="col-12 row">
+    <div class="col-6">
+        @if (lstItems != null){}
+            <CascadingValue Value="lstItems">
+            <ul class="nav flex-column" >
+                <TreeView TItem="TItem" ParentId="0" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
+                          ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" AdditionalCol1="@AdditionalCol1" AdditionalCol2="@AdditionalCol2" TableName="@TableName"
+                          OnItemSelectedCallback="DisplayData" isNaveMode="@isNavMode" />
+                </ul>
+            </CascadingValue>
+        </div>
+    <div class="col-6">
+        <div style="margin-bottom:10px">
+            <CustomForm Model="@currentObject" OnValueChanged="cboValueChange" InvisibleColumns=invisibleColumns localizer=localizer
+                        valueLists=valueLists isNavMode="@isNavMode" _ControlsPerRow=1>
+            </CustomForm>
+            </div>
+            @if (Tabs != null)
+            {
+            <div style="border:1px solid #0056b3; /* أزرق غامق */height:100%">
+                    <CascadingValue Value="this">
+                        @Tabs
+                    </CascadingValue>   
+                </div>
+            }
+        
+            
+        
+
+        </div>
+    </div>

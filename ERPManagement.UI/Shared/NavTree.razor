@@ -1,0 +1,57 @@
+﻿@page "/NavTree"
+
+@inject IStringLocalizer<NavTree> localizer
+@inject IHttpContextAccessor _httpContextAccessor
+@attribute [Authorize]
+<!-- NavTree.razor -->
+<ul class="tree @Collapse">
+
+    @if (dtforms != null && dtforms.Rows.Count > 0)
+    {
+        <!-- Loop through Modules -->
+        @foreach (var module in dtforms.Select("ParentID is Null  And Form not like '%MobileApp'"))
+        {
+            <li>
+                <!-- Top level: modules -->
+                <span class="toggle@(IsModulesExpanded(int.Parse(module["FormID"].ToString())) ? "-expanded" : "-collapsed")"
+                @onclick="() => ToggleModules(module)">
+                    <NavLink style="text-decoration:none;" href="" @onclick:preventDefault>
+                        <span class="link @language["Bodydir"]">@(localizer["FormNameEn"] == "FormNameEn" ? module["FormNameEn"] : module["FormNameAr"])</span>
+                    </NavLink>
+                </span>
+
+                <ul class="nested" style="display: @(IsModulesExpanded(int.Parse(module["FormID"].ToString())) ? "block" : "none")">
+
+                    <!-- Loop through groups -->
+                    @foreach (var groups in dtforms.Select(" ParentID= '" + module["FormID"] + "'"))
+                    {
+                        <li>
+                            <span class="toggle@(IsGroupsExpanded(int.Parse(groups["FormID"].ToString())) ? "-expanded" : "-collapsed")"
+                            @onclick="() => ToggleGroups(module, groups)">
+                                <NavLink style="text-decoration:none;" href="" @onclick:preventDefault>
+                                    <span class="link @language["Bodydir"]">@(localizer["FormNameEn"] == "FormNameEn" ? groups["FormNameEn"] : groups["FormNameAr"])</span>
+                                </NavLink>
+                            </span>
+
+                            <ul class="nested"
+                                style="display: @(IsGroupsExpanded(int.Parse(groups["FormID"].ToString())) ? "block" : "none")">
+                                <!-- Loop through forms -->
+                                @foreach (var forms in dtforms.Select(" ParentID= '" + groups["FormID"] + "'"))
+                                {
+                                    <!-- Last level: forms -->
+                                    <li>
+                                        <NavLink style="text-decoration:none;" href="@forms["Form"]">
+                                            <span class="link">@(localizer["FormNameEn"] == "FormNameEn" ? forms["FormNameEn"] : forms["FormNameAr"])</span>
+                                        </NavLink>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                    }
+                </ul>
+            </li>
+
+
+        }
+    }
+</ul>

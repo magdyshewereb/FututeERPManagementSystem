@@ -1,0 +1,21 @@
+﻿@typeparam TModel
+<div class="container-fluid">
+    <div class="row">
+        <div tree class="col-4 border-end" dir="@TreeDirection">
+            <input class="form-control mb-2"
+                   placeholder="@(TreeDirection == "rtl" ? "🔍 ابحث..." : "🔍 Search...")"
+                   value="@searchTerm"
+                   @oninput="OnSearch" />
+
+            @RenderTree()
+        </div>
+        <div class="col-8">
+            @RenderDetails()
+        </div>
+    </div>
+</div>
+
+
+
+
+ 

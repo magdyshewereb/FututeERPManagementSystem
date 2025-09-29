@@ -1,0 +1,63 @@
+﻿@* 1 *@
+@typeparam TModel
+
+@if (Errors != null && Errors.Any())
+{
+    <div class="alert alert-danger mt-2">
+        <ul>
+            @foreach (var error in Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter] public List<string> Errors { get; set; } = new();
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Errors != null && Errors.Any())
+        {
+            foreach (var error in Errors)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    toast = true,
+                    position = "top-end",
+                    showConfirmButton = false,
+                    timer = 1000,
+                    icon = "error",
+                    title = error
+                });
+            }
+        }
+    }
+}
+
+@* 2 *@
+@* @typeparam TModel
+
+@if (Errors != null && Errors.Any())
+{
+    <div class="alert alert-danger mt-2">
+        <ul>
+            @foreach (var error in Errors)
+            {
+                <li>@error</li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    [Parameter] public List<string> Errors { get; set; } = new();
+    private void ClearErrors()
+    {
+        Errors.Clear();               
+        InvokeAsync(StateHasChanged);  
+    }
+}
+ *@

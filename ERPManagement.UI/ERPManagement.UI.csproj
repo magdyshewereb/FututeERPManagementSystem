@@ -1,0 +1,76 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Dev Magdy\.nuget\packages\ntoastnotify\8.0.0\contentFiles\any\net6.0\wwwroot\noty.js" />
+    <Content Remove="C:\Users\Dev Magdy\.nuget\packages\ntoastnotify\8.0.0\contentFiles\any\net6.0\wwwroot\toastr.js" />
+  </ItemGroup>
+ 
+	<ItemGroup>
+
+		<PackageReference Include="MediatR" Version="12.1.1" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.16" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.1" />
+
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
+
+		<PackageReference Include="NToastNotify" Version="8.0.0" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.8.7" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.2" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
+		<PackageReference Include="RestSharp" Version="110.2.1-alpha.0.16" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.1" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.1" />
+
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+		<PackageReference Include="Serilog.Enrichers.Process" Version="3.0.0" />
+		<PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
+		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
+		<PackageReference Include="Serilog.Sinks.MSSqlServer" Version="8.2.2" />
+
+		<PackageReference Include="NToastNotify" Version="8.0.0" />
+		<PackageReference Include="Hangfire.AspNetCore" Version="1.8.7" />
+		<PackageReference Include="Hangfire.SqlServer" Version="1.8.7" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
+
+		<PackageReference Include="Serilog" Version="4.1.0" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataModels\LanguageUtilities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ERPManagement.Application\ERPManagement.Application.csproj" />
+    <ProjectReference Include="..\ERPManagement.Infrastructure\ERPManagement.Infrastructure.csproj" />
+    <ProjectReference Include="..\ERPManagement.Persistence\ERPManagement.Persistence.csproj" />
+  </ItemGroup>
+
+
+
+</Project>

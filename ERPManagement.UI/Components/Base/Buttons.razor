@@ -1,0 +1,71 @@
+﻿@inject IStringLocalizer<Buttons> localizer
+@inject NavigationManager NavigationManager
+@using GeneralClasses;
+
+<Base></Base>
+@if(isModalVisible)
+{
+    <ModalDialog DialogType="DialogType" Title="@Title" Text="@Message" OnClose="OnClose">
+
+    </ModalDialog>
+}
+
+@* <InformationMB @bind-IsVisible="isInfoModalVisible"
+               MessageBody=@errorMessage Title=""></InformationMB>
+<QuestionMB @bind-IsVisible="isQMBModalVisible"
+            MessageBody="@QMBMessage" Title="@QMBTitle" ConfirmAction="ConfirmAction" CancelAction="CancelAction"></QuestionMB>*@
+ @if (isNavMode)
+{
+
+    <div class="row  flex-nowrap ">
+        <div class="col-auto px-1 ">
+            <button id="Add" @onclick=AddButtonPressed class="btnborder erp-btn form-control">@localizer["New"]</button>
+        </div>
+        <div class="col-auto px-1 ">
+            <button id="Update" @onclick=UpdateButtonPressed class="btn erp-btn form-control">@localizer["Update"]</button>
+        </div>
+        <div class="col-auto px-1 ">
+            <button id="Delete" class="btn erp-btn  form-control" @onclick="DeleteClick">@localizer["Delete"]</button>
+        </div>
+        <div class=" col-auto px-1" hidden="@hiddenButtons.HideAddRoot">
+            <button id="AddRoot" class="btn erp-btn form-control" @onclick="OnAddRootCallback">@localizer["AddRoot"]</button>
+        </div>
+        <div class=" col-auto px-1" hidden="@hiddenButtons.HideCopy">
+            <button id="Copy" class="btn erp-btn form-control" @onclick="OnCopyCallback">@localizer["Copy"]</button>
+        </div>
+        <div class=" col-auto px-1" hidden="@hiddenButtons.HidePrint">
+            <button id="Print" class="btn erp-btn form-control" @onclick="OnPrintCallback">@localizer["Print"]</button>
+        </div>
+        <div class="px-1 col input-group  flex-nowrap">
+            <button hidden="@hiddenButtons.HideNext" id="Next" class="mx-1 col-auto btn erp-btn" @onclick="OnNextCallback">&#8249;</button>
+            <input hidden="@hiddenButtons.HideSearch" type="search" @bind=SearchCode class="col-auto  rounded" aria-label="Search" aria-describedby="search-addon" />
+            <button hidden="@hiddenButtons.HideSearch" type="button" class="col-auto btn  erp-btn " @onclick="OnSearchCallback"><i class="fa fa-search"></i></button>
+            <button hidden="@hiddenButtons.HidePrevious" id="Prev" class="mx-1 col-auto btn erp-btn" @onclick="OnPreviousCallback">&#8250;</button>
+        </div>
+        <div class=" px-1 flex-grow-0 d-flex rounded align-items-center justify-content-center " id="FormName" style="background-color:#0c5baa; flex-shrink:revert"><span class="fw-bolder fs-4" style="color:#ffc600">@formName</span></div>
+        <div class="col-auto px-1 ">
+            <button id="Close" class="btn erp-btn form-control" @onclick="Close">X</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-auto px-1">
+                <button id="Save" class="btn erp-btn btn form-control" @onclick=PreSavePressed >@localizer["Save"]</button>
+        </div>
+        <div class="col-auto px-1">
+            <button id="SaveAndClose" class="btn erp-btn btn form-control" @onclick=SaveAndCloseButtonPressed>@localizer["SaveAndClose"]</button>
+        </div>
+        <div class="col-auto px-1">
+            <button id="Cancel" class="btn erp-btn btn form-control" @onclick=btnCancel_Click >@localizer["Cancel"]</button>
+        </div> 
+        <div class="col-auto px-1">
+            <button id="Refresh" hidden="@hiddenButtons.HideRefresh" class="btn erp-btn btn form-control">@localizer["Refresh"]</button>
+        </div>
+        <div class=" px-1 col flex-grow d-flex rounded align-items-center justify-content-center " id="FormName" style="height:auto; background-color:#0c5baa; flex-shrink:revert"><span  class="fw-bolder fs-4" style="color:#ffc600">@formName</span></div>
+        @* <div class="col-auto px-1">
+            <button id="Close" class="btn erp-btn form-control" @onclick="Close">X</button>
+        </div> *@
+    </div>
+}

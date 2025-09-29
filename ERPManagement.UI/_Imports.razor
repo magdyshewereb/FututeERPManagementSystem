@@ -1,0 +1,25 @@
+﻿@using System.Net.Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+
+@using ERPManagement.UI.Shared
+@using ERPManagement.UI.Components.Base;
+@using ERPManagement.UI.Components.Global;
+@using Microsoft.Extensions.Localization;
+@using ERPManagement.UI.DataModels.General;
+@using ERPManagement.UI.DataModels.Accounting.MasterData
+@using GeneralClasses;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+
+@inject GlobalFunctions globalFunctions
+@inject ProtectedLocalStorage protectedLocalStorage
+@inject ProtectedLocalStorageService protectedLocalStorageService
+@inject WebsiteAuthenticator WebsiteAuthenticator
+@inject IStringLocalizer<LanguageSelector> language
+
+

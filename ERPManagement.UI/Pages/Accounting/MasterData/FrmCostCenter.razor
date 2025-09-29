@@ -1,0 +1,47 @@
+﻿@page "/frmCostCenter"
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.GeneralClasses
+@using ERPManagement.UI.DataModels.Accounting;
+@inject IStringLocalizer<FrmCostCenterTree> localizer;
+@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+@attribute [Authorize(Roles = "ERP.Accounting.MasterData.frmCostCenterTree")]
+@inherits PageLayoutComponent<CostCenter>
+<CascadingValue Value="this" IsFixed="true">
+    <DynamicButtons TModel="CostCenter" />
+</CascadingValue>
+
+   @*  TreeDirection="rtl" *@
+<DynamicTreeWithDetails TModel="CostCenter"
+                        Data="costCenters"
+                        GetId="x => x.CostCenterID"
+                        GetParentId="x => x.ParentID"
+                        GetText="x => x.CostCenterNameAr">
+
+    <ChildContent Context="acc"> 
+        <!-- your form UI bound to BasePage.CurrentObject -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label>@localizer["CostCenterNumber"]</label>
+                    <input @bind="@acc.CostCenterNumber" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+            </div>
+               <div class="row">
+                 <div class="col-md-4 ">
+                    <label>@localizer["CostCenterNameAr"] </label>
+                    <input @bind="@acc.CostCenterNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                 </div>
+    
+                 <div class="col-md-4  ">
+                    <label>@localizer["CostCenterNameEn"]</label>
+                    <input @bind="@acc.CostCenterNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                 </div>
+
+            </div>
+
+        </div>
+    </ChildContent>
+</DynamicTreeWithDetails>
+

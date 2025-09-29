@@ -1,0 +1,92 @@
+﻿@page "/frmCurrency"
+@inherits PageLayoutComponent<Currency>
+@inject IJSRuntime js
+@using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
+ 
+
+
+@* <PageLayoutComponent TModel="Currency"
+                   FormName="@formName"
+                   IsArabic="@isArabic"
+                   Data="@dtCurrencies"
+                   InvisibleColumns="@invisibleColumns"
+                   ForeignKeyLookups="@fkLookups"
+                   Localizer="@localizer"
+                   OnNewEntity="HandleNew"
+                   OnSaveEntity="HandleSave"
+                   OnSaveAndCloseEntity="HandleSaveAndClose"
+                   OnDeleteEntity="HandleDelete"
+                   MapRowToModel="@currencyService.MapRowToCurrency"
+                   OnRowSelected="HandleRowSelected"
+                     OnCancelEntity="HandleCancel"
+                   OnEditEntity="HandleEdit"> *@
+
+<PageLayoutComponent TModel="Currency"
+                     FormName="@formName"
+                     IsArabic="@isArabic"
+                     Data="@dtCurrencies"
+                     InvisibleColumns="@invisibleColumns"
+                     ForeignKeyLookups="@fkLookups"
+                     Localizer="@localizer"
+                     MapRowToModel="@currencyService.MapRowToCurrency"
+                     ExternalActions="@myCustomActions"
+                     ExternalNavigations="@myCustomNavigations"
+                     ExternalGrid="myCustomGrid"
+                     OnRowSelected="HandleRowSelected"
+                     >
+ 
+  
+       <BodyContent>
+        <CustomValidationSummary TModel="Currency" Errors="ValidationErrors" />
+        <!-- your form UI bound to BasePage.CurrentObject -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label>@localizer["CurrencyCode"]</label>
+                    <input @bind="layout.CurrentObject.CurrencyCode" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label>@localizer["CurrencyNameAr"] </label>
+                    <input @bind="layout.CurrentObject.CurrencyNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+
+                <div class="col-md-4  ">
+                    <label>@localizer["CurrencyNameEn"]</label>
+                    <input @bind="layout.CurrentObject.CurrencyNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4  ">
+                    <label>@localizer["ChangeNameAr"]</label>
+                    <input @bind="layout.CurrentObject.ChangeNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+
+                <div class="col-md-4  ">
+                    <label>@localizer["ChangeNameEn"]</label>
+                    <input @bind="layout.CurrentObject.ChangeNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4  ">
+                    <label>@localizer["EINVCurrencyID"]</label>
+                    <select class="form-select form-select-sm"
+                            @bind-value="layout.CurrentObject.EINVCurrencyID"
+                            @bind-value:event="onchange"
+                            disabled="@(!IsEnabled)">
+                        <option value="">@localizer["Select"]</option>
+                        @foreach (var eINVCurrency in EINVcurrencies)
+                        {
+                            <option value="@eINVCurrency.EINVCurrencyID">@eINVCurrency.EINVCurrencyName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </BodyContent>
+ 
+</PageLayoutComponent>

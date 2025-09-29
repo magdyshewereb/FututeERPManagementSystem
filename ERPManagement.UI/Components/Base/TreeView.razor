@@ -1,0 +1,51 @@
+﻿@typeparam TItem
+@using System.Data;
+@inject IJSRuntime js
+
+
+<!-- TreeViewComponent.razor -->
+@if (lstItems!=null)
+{
+    @foreach (var parent  in lstItems)
+    {
+        if (GetPropertyValue(parent, ParentIDCol) == ParentId.ToString())
+        {
+
+            if (bool.Parse(GetPropertyValue(parent,IsMainCol).ToString()))
+            {
+                <li>
+                    <!-- Top level: Parents -->
+                    <a href="" @onclick="() => ToggleParents(int.Parse(GetPropertyValue(parent, IDCol).ToString()))" @onclick:preventDefault style="text-decoration:none; color:inherit;">
+                        @(IsParentExpanded(int.Parse(GetPropertyValue(parent, IDCol).ToString())) ? " ◢ " : " 📁 ")
+                    </a>
+                    <span id="Node@(GetPropertyValue(parent, IDCol))" class=" parentNode" @onclick="(() => {SelectNode(parent);})" @onclick:stopPropagation>
+                        @**@
+                        @*@(selectedIDs.Contains(int.Parse(GetPropertyValue(parent, IDCol).ToString()))?"selected":"unSelected")*@
+                        @GetPropertyValue(parent, NoCol)
+                        @(language["Language"] == "اللغة" ? GetPropertyValue(parent, NameCol) : GetPropertyValue(parent, NameEnCol))
+                    </span>
+                    @*<span id="Span@(GetPropertyValue(parent, IDCol))"></span>*@
+                    <ul class="nested" style="display:@(IsParentExpanded(int.Parse(GetPropertyValue(parent, IDCol).ToString()))? "block":"none")">
+                        <!-- Loop through childs -->
+                        <TreeView TItem="TItem" ParentId="@(int.Parse(GetPropertyValue(parent, IDCol).ToString()))" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
+                                  ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" AdditionalCol1="@AdditionalCol1" AdditionalCol2="@AdditionalCol2" TableName="@TableName" OnItemSelectedCallback="SelectNode" isNaveMode="@isNaveMode"></TreeView>
+
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li @onclick="(() => {SelectNode(parent);})" @onclick:stopPropagation>
+                    <span id="Node@(GetPropertyValue(parent, IDCol))" class="childNode" >
+                        @*@(selectedIDs.Contains(int.Parse(GetPropertyValue(parent, IDCol).ToString()))?"selected":"unSelected") *@
+                        @GetPropertyValue(parent, NoCol)
+                        <a href="" @onclick:preventDefault style="text-decoration:none; color:inherit;">
+                            @(language["Language"] == "اللغة" ? GetPropertyValue(parent, NameCol) : GetPropertyValue(parent, NameEnCol))
+                        </a>
+                    </span>
+                </li>
+            }
+
+        }
+    }
+}

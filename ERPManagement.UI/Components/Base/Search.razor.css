@@ -1,0 +1,15 @@
+﻿.table.sticky th {
+    position:sticky;
+    top:0 ;
+}
+
+
+.table > thead > tr > th,
+.table > thead > tr > td {
+
+    letter-spacing: 1px;
+    vertical-align: top;
+    padding: 8px;
+    background: rgba(12, 91, 170,1);
+    color: #ffffff;
+}

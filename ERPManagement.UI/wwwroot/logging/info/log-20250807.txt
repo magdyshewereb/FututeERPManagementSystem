@@ -1,0 +1,16 @@
+08/07/2025 18:18:38 +03:00 Application Starting
+08/07/2025 18:18:58 +03:00 Entity '"BusinessObject"' has a global query filter defined and is the required end of a relationship with the entity '"RoleBusinessObject"'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+08/07/2025 18:18:58 +03:00 Entity '"BusinessObject"' has a global query filter defined and is the required end of a relationship with the entity '"UserForm"'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+08/07/2025 18:18:58 +03:00 Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+08/07/2025 18:19:05 +03:00 HTTP "GET" "/" responded 404 in 1.7280 ms
+08/07/2025 18:19:18 +03:00 Login request processed.
+08/07/2025 18:19:18 +03:00 HTTP "POST" "/api/accounts/login" responded 200 in 1468.8535 ms
+08/07/2025 18:22:28 +03:00 Application Starting
+08/07/2025 18:22:37 +03:00 Entity '"BusinessObject"' has a global query filter defined and is the required end of a relationship with the entity '"RoleBusinessObject"'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+08/07/2025 18:22:37 +03:00 Entity '"BusinessObject"' has a global query filter defined and is the required end of a relationship with the entity '"UserForm"'. This may lead to unexpected results when the required entity is filtered out. Either configure the navigation as optional, or define matching query filters for both entities in the navigation. See https://go.microsoft.com/fwlink/?linkid=2131316 for more information.
+08/07/2025 18:22:37 +03:00 Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+08/07/2025 18:22:41 +03:00 HTTP "GET" "/" responded 404 in 0.8930 ms
+08/07/2025 18:22:46 +03:00 Login request processed.
+08/07/2025 18:22:46 +03:00 HTTP "POST" "/api/accounts/login" responded 200 in 849.9322 ms
+08/07/2025 19:06:55 +03:00 Login request processed.
+08/07/2025 19:06:55 +03:00 HTTP "POST" "/api/accounts/login" responded 200 in 347.2535 ms

@@ -1,0 +1,52 @@
+﻿@typeparam TItem
+@typeparam TItemDetails
+
+@using System.Data;
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.Privilege
+@inject ERPManagement.UI.DataModels.Accounting.FiscalYearService fiscalYearService
+@inject ERPManagement.UI.DataModels.Privilege.SearchPeriodService searchPeriodService
+@inject ERPManagement.UI.DataModels.Privilege.SearchColumnsService searchColumnService
+
+
+@if (valueLists.Count > 0)
+{
+    @* if (IsInfoMBVisible)
+    {
+        <ModalDialog DialogType="MBType" OnClose="Close" Text="@InfoMessage"></ModalDialog>
+    } *@
+    if (IsSearchMDVisible)
+    {
+        <Search dtItems="dtSearch" ColWidth="@lstSearchWidth" InvisibleColumns="@DetailsInvisibleColumns" isNaveMode="@isNavMode" localizer="@localizer" OnClose="Close"
+                ColID="@(IDCol)" FormName=@FormFullName OnOk="FillData" OnDoubleClickCallback="FillData"></Search>
+    }
+    else
+    {
+        <Buttons ValidateDataFun="ValidateData" AddFun="Add" OnClearControlsCallback="ClearControls" OnCopyCallback="Copy" OnDeleteCallback="btnDelete"
+                 OnNextCallback="Next" OnPreviousCallback="Previous" OnSearchCallback="btnSearchClick" UpdateFun="Update" SearchCode=""
+                 OnChangeStateCallback="SetControls" OnCancelCallback="Cancel" BtnDeleteClickFun="CheckBeforeDelete" 
+                 formName=@localizer[FormName] hiddenButtons="@hiddenButtons"    />
+
+       
+        @HeaderContent
+        @* -- Grid Details Data *@ 
+                        <div style="overflow: auto;height: 500px; background-color: aliceblue;">
+            @if (lstDetails == null)
+            {
+                <h3>Loading....</h3>
+            }
+            else
+            {
+                if (currentState == GlobalVariables.States.NavMode)
+                {
+                    <DataGrid @ref="gridComponentDetails" Items="@lstDetails" InvisibleColumns=DetailsInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                }
+                else
+                {
+                    <EditableGrid TItem="TItemDetails" itemsPerPage="10" Items="@lstDetails" OnAddNewItemFunc="AddNewDefaultItem" ColWidth="@lstDetailGridWidth" OnCellUpdateFunc="CellUpdate" OnCellListSelectFunc="CellListChanged" InvisibleColumns=DetailsInvisibleColumns localizer=localizer valueLists=valueLists lstFilters="lstFilters" dts="ds" />
+                }
+            }
+        </div>
+        @FooterContent
+    }
+}

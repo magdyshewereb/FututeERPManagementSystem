@@ -1,0 +1,85 @@
+﻿@typeparam TModel
+@using ERPManagement.Application.Shared.Enums
+@inject IStringLocalizer<DynamicButtons> localizer 
+
+@if (BaseActions != null)
+{
+ 
+    <div class="row">
+        <div class="col-md-6">
+            <div class="action-bar rounded shadow-sm mb-3 d-flex flex-wrap gap-2" role="toolbar">
+                @if (!BaseActions.HiddenButtons.HideNew && BaseActions.State == FormState.View)
+                {
+                    <button class="btn btn-primary d-flex align-items-center " @onclick="OnNewClick">
+                        <i class="bi bi-plus-lg me-1"></i> @localizer["New"]
+                    </button>
+                }
+                @if (!BaseActions.HiddenButtons.HideEdit && BaseActions.State == FormState.View)
+                {
+                    <button class="btn btn-warning d-flex align-items-center  " @onclick="OnEditClick">
+                        <i class="bi bi-pencil-square me-1"></i> @localizer["Update"]
+                    </button>
+                }
+                @if (!BaseActions.HiddenButtons.HideDelete && BaseActions.State == FormState.View)
+                {
+                    <button class="btn btn-danger d-flex align-items-center  " @onclick="OnDeleteClick">
+                        <i class="bi bi-trash3 me-1"></i> @localizer["Delete"]
+                    </button>
+                }
+                @if ((BaseActions.State == FormState.Add || BaseActions.State == FormState.Edit) && !BaseActions.HiddenButtons.HideSave)
+                {
+                    <button class="btn btn-success px-4 py-2 d-flex align-items-center shadow-sm" @onclick="OnSaveClick">
+                        <i class="bi bi-save ms-2"></i> @localizer["Save"]
+                    </button>
+                }
+                @if ((BaseActions.State == FormState.Add || BaseActions.State == FormState.Edit) && !BaseActions.HiddenButtons.HideSaveAndClose)
+                {
+                    <button class="btn btn-primary px-4 py-2 d-flex align-items-center shadow-sm " @onclick="OnSaveAndCloseClick">
+                        <i class="bi bi-check2-circle ms-2"></i>@localizer["SaveAndClose"]
+                    </button>
+                }
+                @if ((BaseActions.State == FormState.Add || BaseActions.State == FormState.Edit) && !BaseActions.HiddenButtons.HideCancel)
+                {
+                    <button class="btn btn-outline-secondary px-4 py-2 d-flex align-items-center shadow-sm " @onclick="OnCancelClick">
+                        <i class="bi bi-x-circle ms-2"></i> @localizer["Cancel"]
+                    </button>
+                }
+                @if (BaseNavigations != null && !BaseActions.HiddenButtons.HideNavigation && BaseActions.State == FormState.View)
+                {
+                    <div class="btn-group ms-2" dir="@(IsArabic ? "rtl" : "ltr")">
+                        <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.FirstEntity" title=@localizer["First"]>
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-skip-forward-fill'></i>"
+                                                : (MarkupString)"<i class='bi bi-skip-backward-fill'></i>")
+                        </button>
+                                                                                                       <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.PreviousEntity" title=@localizer["Previous"]>
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-arrow-right-circle'></i>"
+                                                : (MarkupString)"<i class='bi bi-arrow-left-circle'></i>")
+                        </button>
+                                                                                                      <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.NextEntity" title=@localizer["Next"]>
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-arrow-left-circle'></i>"
+                                                : (MarkupString)"<i class='bi bi-arrow-right-circle'></i>")
+                        </button>
+                                                                                                       <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.LastEntity" title=@localizer["Last"]>
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-skip-backward-fill'></i>"
+                                                : (MarkupString)"<i class='bi bi-skip-forward-fill'></i>")
+                </button>
+            </div>
+                        }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="action-bar d-flex align-items-center">
+                <div class="flex-grow-1 px-1 d-flex rounded align-items-center"
+                     id="FormName"
+                     style="background-color:#0c5baa;">
+                    <span class="fw-bolder fs-4 align-items-center" style="color:#ffc600; text-align :center">@FormName</span>
+                </div>
+                <div class="col-auto px-1">
+                    <button id="Close" class="btn erp-btn form-control" @onclick="Close">X</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+}

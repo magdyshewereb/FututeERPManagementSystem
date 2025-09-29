@@ -1,0 +1,124 @@
+﻿@typeparam TItem
+@* @inject IStringLocalizer<DataGrid<TItem>> glocalizer *@
+
+
+
+<div class="table-responsive">
+    <table class=@GlobalVariables.TableClass>
+        <thead>
+            <tr class="fw-light ">
+                <th class=@GlobalVariables.TableHeaderClass>#</th>
+                @foreach (var property in typeof(TItem).GetProperties())
+                {
+                    if (!InvisibleColumns.Contains(property.Name))
+                    {
+                        <th class=@GlobalVariables.TableHeaderClass>@localizer[property.Name]</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = (currentPage - 1) * itemsPerPage;
+            }
+            @foreach (TItem item in Items.Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage))
+
+            {
+                <tr @onclick="() => SelectItem(item)" class="fw-light @(item.Equals(selectedItem )? "bg-secondary text-white":"")">
+                    @{
+                        ++counter;
+                    }
+                    <td class=@GlobalVariables.TableCellDataClass>@counter</td>
+                    @foreach (var property in typeof(TItem).GetProperties())
+                    {
+
+                        if (!InvisibleColumns.Contains(property.Name))
+                        {
+                            if (valueLists.ContainsKey(property.Name))
+                            {
+                                if (property.GetValue(item) != null && int.Parse(property.GetValue(item)!.ToString()!) != 0)
+                                {
+                                    <td class=@GlobalVariables.TableCellDataClass>
+                                        @((valueLists[property.Name].ContainsKey(property.GetValue(item).ToString())) ? valueLists[property.Name][property.GetValue(item).ToString()] : "")
+                                    </td>
+                                }
+                                else
+                                {
+
+                                    <td> </td>
+                                }
+
+                            }
+                            else
+                            {
+                                if(Decimal.TryParse(property.GetValue(item)?.ToString(),out decimal num)){
+                                    <td class=@GlobalVariables.TableCellDataClass>
+                                        @num.ToString("#.00")
+                                    </td>
+                                }else if(bool.TryParse(property.GetValue(item)?.ToString(),out bool chk)) {
+                                    <td class=@GlobalVariables.TableCellDataClass>
+                                        @* @chk.ToString("0.##"); *@
+                                        <input class=@GlobalVariables.CheckboxClass  type="checkbox" checked="@(chk)" readonly />
+                                    </td>
+                                }  else
+                                {
+                                    <td class=@GlobalVariables.TableCellDataClass>
+                                        @property.GetValue(item)
+                                    </td>
+                                }                                  
+                            }
+                        }
+                    }
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+@if(Items.Count > 5)
+{
+    <div class="d-flex flex-row flex-nowrap">
+   @*  <div class="p-2">
+        <p class="fw-bold d-inline" style="color: #0c5baa">@glocalizer["Page"] @currentPage @glocalizer["Of"] @totalPages (@Items.Count()) @glocalizer["Item"]</p>
+    </div> 
+    <div class="p-2">
+        @* <p class="fw-bold d-inline" style="color: #0c5baa">@glocalizer["ItemPerPage"]</p> 
+        <input type="number" class="small  d-inline" @bind="itemsPerPage" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+    </div> *@
+
+
+    <div class=" d-flex flex-row flex-nowrap p-2">
+     
+        <select class=@GlobalVariables.ComboboxClass @onchange="(e)=>ChangeItemsPerPage(e)">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">15</option>  
+            <option value="20">20</option>
+            <option value="25">25</option>
+        </select>
+      
+        <ul class="pagination mb-0">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="FirstPage">&laquo;</button>
+            </li>
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="PreviousPage"> &lsaquo;</button>
+            </li>
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                var pageNumber = i;
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    <button class="page-link" @onclick="() => GoToPage(pageNumber)">@i</button>
+                </li>
+            }
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="NextPage">&rsaquo;</button>
+            </li>
+            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="LastPage">&raquo;</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+}

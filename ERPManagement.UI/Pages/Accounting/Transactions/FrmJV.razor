@@ -1,0 +1,122 @@
+﻿@page "/FrmJV"
+@using System.Data;
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.Accounting;
+@using ERPManagement.UI.DataModels.Accounting.MasterData
+@using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
+@using ERPManagement.UI.DataModels.Defaults
+@using ERPManagement.UI.DataModels.Privilege
+@inject IStringLocalizer<FrmJV> localizer;
+@inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsService subAccountsService
+@inject CurrencyService currencyService;
+@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject ERPManagement.UI.DataModels.Accounting.JVService jvService
+@inject ERPManagement.UI.DataModels.Accounting.JVDetailsService jvDetailService
+@inject ERPManagement.UI.DataModels.Accounting.FiscalYearService fiscalYearService
+@inject ERPManagement.UI.DataModels.Defaults.JVDefaultsService jvDefaultService
+@inject ERPManagement.UI.DataModels.Privilege.SearchPeriodService searchPeriodService
+@inject ERPManagement.UI.DataModels.Privilege.SearchColumnsService searchColumnService
+@attribute [Authorize(Roles = "ERP.Accounting.Transactions.frmJV")]
+
+@if (valueLists.Count > 0)
+{
+    if (IsInfoMBVisible){
+        <ModalDialog DialogType="MBType" OnClose="Close" Text="@InfoMessage"></ModalDialog>
+    }
+    if (IsSearchMDVisible)
+    {
+        <Search dtItems="dtJVs" ColWidth="@lstSearchWidth" InvisibleColumns="@JVDetailsInvisibleColumns" isNaveMode="@isNavMode" localizer="@localizer" OnClose="Close"
+                 ColID="@("JVID")" FormName="ERP.Accounting.Search.frmJVSearchReport" OnOk="FillData" OnDoubleClickCallback="FillData"></Search>
+    }
+    else
+    {
+         <Buttons ValidateDataFun="ValidateData" AddFun="Add" OnClearControlsCallback="ClearControls" OnCopyCallback="Copy" OnDeleteCallback="Delete"
+                 OnNextCallback="Next" OnPreviousCallback="Previous" OnSearchCallback="btnSearchClick" UpdateFun="Update" SearchCode=""
+             OnChangeStateCallback="ChangeNavMode" OnCancelCallback="Cancel" BtnDeleteClickFun ="CheckBeforeDelete"
+             formName=@localizer["JV"] hiddenButtons="@hiddenButtons" />
+
+              @* -- Header Data *@ 
+        <div class="form-inline row">
+            <label id="JVDate" class="@GlobalVariables.LabelClass col-sm-1">@localizer["JVDate"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="JVDate" type="date" @bind=jvDate readonly="@isNavMode" />
+            </div>
+            <label id="TransTypeID" class="@GlobalVariables.LabelClass col-sm-1">@localizer["TransTypeID"]</label>
+            <div class="col-sm-2">
+                <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="TransTypeID" @bind="jvObj.TransTypeID" disabled="@isNavMode">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtJVDefaults.Rows)
+                    {
+                        <option value="@item["TransTypeID"]"> @(systemSettings.IsArabic ? @item["TransTypeNameAr"] : @item["TransTypeNameEn"])</option>
+                    }
+                </select>
+            </div>
+            <label id="ReceiptNo" class="@GlobalVariables.LabelClass col-sm-1">@localizer["ReceiptNo"]</label>
+            <div class="form-group col-sm-1">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="ReceiptNo" type="text" @bind-value=jvObj.ReceiptNo readonly="@isNavMode" />
+            </div>
+            <div class="col-auto px-1 ">
+                <button id="View" @onclick=btnViewClick class="btnborder erp-btn form-control" hidden=@(!(isNavMode && jvObj != null && !jvObj.VoucherID.Equals(DBNull.Value))) disabled="@(!(isNavMode && jvObj.VoucherID.HasValue))">@localizer["View"]</button>
+            </div>
+            <div class="form-group col-sm-1">
+                <label id="Currency" class=@GlobalVariables.LabelClass hidden="@isNavMode">@localizer["CurrencyID"]</label>
+                <input class=@GlobalVariables.CheckboxClass aria-labelledby="Currency" @onchange="args=>chkCurrencyChecked(args)" type="checkbox" hidden="@isNavMode" />
+            </div>
+            <div class="col-sm-2">
+                <select class="@GlobalVariables.ComboboxClass form-select-sm" @onchange="@(e => cboCurrencyValueChanged(int.Parse(e.Value.ToString())))" disabled="@(!chkCurrency)" hidden="@isNavMode" aria-labelledby="Currency">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtCurrency.Rows)
+                    {
+                        <option value="@item["CurrencyID"]">@item["CurrencyName"] </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="form-inline row" >
+            <label id="Notes" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Notes"]</label>
+            <div class="col-sm-6">
+                <textarea cols="2" class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="JVDate" @bind=jvObj.Notes readonly="@isNavMode" />
+            </div>
+            <div class="form-group col-sm-2">
+                <label id="IsOpenningJv" class=@GlobalVariables.LabelClass>@localizer["IsOpenningJv"]</label>
+                <input class=@GlobalVariables.CheckboxClass aria-labelledby="IsOpenningJv" type="checkbox" @bind-value=jvObj.IsOpenningJv hidden="@IsRepeatedJV" disabled="@isNavMode" />
+            </div>
+        </div>
+        @* -- Grid Details Data *@ 
+                <div style="overflow: auto;height: 500px; background-color: aliceblue;">
+            @if (lstJVDetails == null)
+            {
+                <h3>Loading....</h3>
+            }
+            else
+            {
+                if (currentState == GlobalVariables.States.NavMode)
+                {
+                    <DataGrid @ref="gridComponentJVDetails" Items="@lstJVDetails" InvisibleColumns=JVDetailsInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                }
+                else
+                {
+                    <EditableGrid TItem="JVDetails" itemsPerPage="10" Items="@lstJVDetails" OnAddNewItemFunc="AddNewDefaultItem" ColWidth="@lstDetailGridWidth" OnCellUpdateFunc="CellUpdate" 
+                        OnCellListSelectFunc="CellListChanged" InvisibleColumns=JVDetailsInvisibleColumns localizer=localizer valueLists=valueLists lstFilters="lstFilters" dts="ds" />
+                }
+            }
+        </div>
+
+        @* -- Header Data Summary *@
+        <div class="form-inline row">
+            <label id="TotalDebit" class="@GlobalVariables.LabelClass col-sm-1">@localizer["TotalDebit"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="TotalDebit" type="text" @bind-value=jvObj.TotalDebit readonly="@isNavMode" />
+            </div>
+            <label id="TotalCredit" class="@GlobalVariables.LabelClass col-sm-1">@localizer["TotalCredit"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="TotalCredit" type="text" @bind-value=jvObj.TotalCredit readonly="@isNavMode" />
+            </div>
+            <label id="Diff" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Diff"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Diff" type="text" @bind-value=diff readonly="@isNavMode" />
+            </div>
+        </div>
+    }
+}

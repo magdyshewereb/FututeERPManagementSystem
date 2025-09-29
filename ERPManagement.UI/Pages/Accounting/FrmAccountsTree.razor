@@ -1,0 +1,24 @@
+﻿@page "/frmAccountsTree"
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.GeneralClasses
+@using ERPManagement.UI.DataModels.Accounting;
+@inject IStringLocalizer<FrmAccountsTree> localizer;
+@inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
+@inject ERPManagement.UI.DataModels.Accounting.AccountTypeService accountTypeService;
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+@attribute [Authorize(Roles = "ERP.Accounting.MasterData.frmAccountsTree")]
+
+@if (valueLists.Count > 0)
+{
+    <CascadingValue Value="currentObject"  Name="currentObj">
+        <CascadingValue Value="selectedNode" Name="selectedObj">
+            <TreeComponent TItem="Account" Tlevel="AccountLevel" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol" AdditionalCol1="@AdditionalCol1" AdditionalCol2="@AdditionalCol2"
+                   ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" TableName="@TableName" LevelsCol="@LevelsCol" LevelsTable="@LevelsTable" LevelsWidthCol="@LevelsWidthCol"
+                           hiddenButtons="@hiddenButtons" invisibleColumns="@invisibleColumns" valueLists="@valueLists" 
+                           OnClearControlsCallback="ClearControls" OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" OnCboValueChangedCallBack="cboCountiesValueChanges"
+                           TreeAddDataFun="TreeAddData" OnDeleteCallBack="TreeDeleteData" TreeUpdateDataFun="TreeUpdateData" OnCancelCallBack="Cancel" localizer="@localizer">
+            </TreeComponent>
+        </CascadingValue>
+    </CascadingValue>
+ }

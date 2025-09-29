@@ -1,0 +1,373 @@
+﻿@*  @typeparam TItem *@
+@inject IStringLocalizer<Search> lczSearch;
+@inject ERPManagement.UI.DataModels.Privilege.SearchPeriodService searchPeriodService
+@inject ERPManagement.UI.DataModels.Privilege.SearchColumnsService searchColumnService
+@using System.Data;
+@using ERPManagement.UI.DataModels.Privilege
+@inject IJSRuntime js
+
+
+@if (IsInfoMBVisible){
+    <ModalDialog DialogType="MBType" OnClose="Close" Text="@InfoMessage"></ModalDialog>
+}
+@if (lstCols.Count > 0)
+{
+    <div class="modal-dialog modal-fullscreen fade show d-block" dir=@lczSearch["dir"]>
+        <div class="modal-content border  border-2 border-dark">
+            <div class=" d-flex rounded align-items-center ">
+                <h3 class="modal-title fw-bold col-6" style="margin-inline-start: auto;">@lczSearch["SearchTitle"]</h3>
+                <button type="button" class="btn col-1 p-0" aria-label="Filter" data-target="#filterModal" @onclick="ModalFilterClose"><i><img src="/img/Filter-icon3.png" /></i></button>
+            </div>
+            <div class="modal-body-search" >
+                <div class="col-12 row">
+                    <div class="col-3">
+                        <div >
+                            @* --------------drow search controls--------------- *@
+                            <form class="form-inline" >
+                                <div class="row" >
+                                    @if (lstCols != null && lstCols.Count > 0)
+                                    {
+                                        lstColsTemp = lstCols.Where(x => x.Available).ToList();
+                                        @foreach (var item in lstColsTemp)
+                                        {
+                                            if (item.Name.StartsWith("chk") && dtItems.Columns[item.Name.Remove(0, 3)] != null && dtItems.Columns[item.Name.Remove(0, 3)]!.DataType == typeof(bool))
+                                            {
+                                                <div class="form-group row "> @*  col-sm-1 *@
+                                                    <label id="@item.Name" class="@GlobalVariables.LabelClass col-sm-3">@localizer[item.Name]</label>
+                                                    <div class="col-sm-3">
+                                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="@item.Name" type="checkbox" checked="@(item.Value=="True"?true:false)" @oninput="@(e=>UpdateFilter("chkNot"+item.Name.Remove(0, 3) , e.Value != null?e.Value.ToString():""))" />
+                                                    </div>
+                                                    <label id="@("chkNot"+item.Name.Remove(0, 3))" class="@GlobalVariables.LabelClass col-sm-3">@localizer["chkNot" + item.Name.Remove(0, 3)]</label>
+                                                    <div class="col-sm-3">
+                                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="@("chkNot"+item.Name.Remove(0, 3))" type="checkbox" checked="@(item.Value=="True"?true:false)" @oninput="@(e=>UpdateFilter("chkNot"+item.Name.Remove(0, 3) , e.Value != null?e.Value.ToString():""))" />
+                                                    </div>
+                                                </div>
+                                            }
+                                            else if (!item.Name.StartsWith("chkNot"))
+                                            {
+                                                <div class="form-group row "> @*  col-sm-1 *@
+                                                    <label id="@item.Name" class="@GlobalVariables.LabelClass col-sm-3">@localizer[item.Name]</label>
+                                                    <div class="col-sm-9">
+
+                                                        @if (item.Name.StartsWith("txt") && (dtItems.Columns[item.Name.Remove(0, 3)]!.DataType == typeof(int) || dtItems.Columns[item.Name.Remove(0, 3)]!.DataType == typeof(decimal)))
+                                                        {
+                                                            <input class="@GlobalVariables.NumberClass" aria-labelledby="@item.Name" type="number" value="@item.Value" @oninput="@(e=>UpdateFilter(item.Name , e.Value != null?e.Value.ToString():""))" />
+                                                        }
+                                                        else if ((item.Name.StartsWith("dtpFrom") && dtItems.Columns[item.Name.Remove(0, 7)]!.DataType == typeof(DateTime)) || (item.Name.StartsWith("dtpTo") && dtItems.Columns[item.Name.Remove(0, 5)]!.DataType == typeof(DateTime)))
+                                                        {
+                                                            <input class="@GlobalVariables.DateTimeClass" aria-labelledby="@item.Name" type="date" value="@((item.Value == "") ? null : DateTime.Parse(item.Value?.ToString()).ToString("yyyy-MM-dd"))" @oninput="@(e=>UpdateFilter(item.Name , e.Value != ""?DateTime.Parse(e.Value?.ToString()).ToString("yyyy-MM-dd"):""))" />
+                                                        }
+                                                        @* else if ((item.Name.StartsWith("chkNot") && dtItems.Columns[item.Name.Remove(0, 6)]!.DataType == typeof(bool)) || (item.Name.StartsWith("chk") && dtItems.Columns[item.Name.Remove(0, 3)]!.DataType == typeof(bool)))
+                                                            {
+                                                                <input class=@GlobalVariables.CheckboxClass aria-labelledby="@item.Name" type="checkbox" checked="@(item.Value=="True"?true:false)" @oninput="@(e=>UpdateFilter(item.Name , e.Value != null?e.Value.ToString():""))" />
+                                                            } *@
+                                                        else if (item.Name.StartsWith("txt") && dtItems.Columns[item.Name.Remove(0, 3)]!.DataType == typeof(string))
+                                                        {
+                                                            <input class="@GlobalVariables.TextBoxClass" aria-labelledby="@item.Name" type="text" value="@item.Value?.ToString()" @oninput="@(e=>UpdateFilter(item.Name , e.Value != null?e.Value.ToString():""))" />
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    @* --------------drow search Grid--------------- *@
+                    <div class="col-9" dir="ltr">
+
+                        <table class="table sticky table-bordered">@*class=@GlobalVariables.TableClass*@
+                                
+                                <thead>
+                                    <tr class="fw-light ">
+                                        @if (!systemSettings.IsArabic)
+                                        {
+                                            <th class=@GlobalVariables.TableHeaderClass type="checkbox">
+                                                <input class=@GlobalVariables.CheckboxClass type="checkbox" @onchange="@((e) => CheckAll((bool)e.Value))" readonly />
+                                            </th>
+                                        }
+
+                                        @foreach (DataColumn col in dtItems.Columns)
+                                        {
+                                            if (!InvisibleColumns.Contains(col.ColumnName) && col.ColumnName != "Choose" && col.ColumnName != ColID)
+                                            {
+                                                <th class=@GlobalVariables.TableHeaderClass>@localizer[col.ColumnName]</th>
+                                            }
+                                        }
+                                        @if (systemSettings.IsArabic)
+                                        {
+                                            <th class=@GlobalVariables.TableHeaderClass type="checkbox">
+                                                <input class=@GlobalVariables.CheckboxClass type="checkbox" @onchange="@((e) => CheckAll((bool)e.Value))" readonly />
+                                            </th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        DataTable dt = new DataTable();
+                                        dt =  MultiFilterString();
+                                        //dt.DefaultView.Sort = "Choose ASC";
+                                        if (dt.Rows.Count > 0)
+                                        {
+                                            int counter = (currentPage - 1) * itemsPerPage;
+                                            dt = dt.Select().Skip((currentPage - 1) * itemsPerPage).Take(itemsPerPage).CopyToDataTable();
+                                        }
+
+                                    }
+                                    @foreach (DataRow dr in dt.Rows)
+                                    {
+                                        <tr class="fw-light" @ondblclick="@(() => {OnDoubleClick(dr[ColID].ToString()!);})">
+                                            @{
+                                                ++counter;
+                                            }
+                                            @if (!systemSettings.IsArabic && dtItems.Columns.Contains("Choose"))
+                                            {
+                                                <td class=@GlobalVariables.TableCellDataClass>
+                                                    <input class=@GlobalVariables.CheckboxClass type="checkbox" checked="@((bool)dr["Choose"]!)" @onchange="@((e) => Choose((bool)e.Value,dr["JVID"].ToString()))" readonly />
+                                                </td>
+                                            }
+                                            @foreach (DataColumn col in dtItems.Columns)
+                                            {
+                                                if (!InvisibleColumns.Contains(col.ColumnName) && col.ColumnName != "Choose" && col.ColumnName != ColID)
+                                                {
+                                                    if (valueLists != null && valueLists.ContainsKey(col.ColumnName))
+                                                    {
+                                                        if (dr[col.ColumnName] != null && int.Parse(dr[col.ColumnName]!.ToString()!) != 0)
+                                                        {
+                                                            <td class=@GlobalVariables.TableCellDataClass >
+                                                                @((valueLists[col.ColumnName].ContainsKey(dr[col.ColumnName].ToString())) ? valueLists[col.ColumnName][dr[col.ColumnName].ToString()] : "")
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                            <td> </td>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        if (bool.TryParse(dr[col.ColumnName]?.ToString(), out bool chk))
+                                                        {
+                                                            <td class=@GlobalVariables.TableCellDataClass  >
+                                                                <input class=@GlobalVariables.CheckboxClass type="checkbox" checked="@(chk)" disabled />
+                                                            </td>
+                                                        }
+                                                        else
+                                                        {
+                                                        <td class="@GlobalVariables.TableCellDataClass ellipsis" width="@(ColWidth[col.ColumnName]+"%")">@*  style="word-break:break-word;" *@
+                                                           
+                                                                <span> @dr[col.ColumnName] </span>
+                                                            </td>
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            @if (systemSettings.IsArabic && dtItems.Columns.Contains("Choose"))
+                                            {
+                                                <td class=@GlobalVariables.TableCellDataClass>
+                                                    <input class=@GlobalVariables.CheckboxClass type="checkbox" checked="@((bool)dr["Choose"]!)" @onchange="@((e) => Choose((bool)e.Value,dr[ColID].ToString()))" readonly />
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    
+                </div>
+
+                @* modal for filter column *@
+                @if (ModalFilterVisible)
+                {
+                    <div class="modal fade show d-block" tabindex="-1" style="background: rgba(0,0,0,0.5)" dir=@lczSearch["dir"]>
+                        <div class="modal-dialog modal-dialog-centered ">
+                            <div class="modal-content border  border-2 border-dark">
+                                <div class="modal-header border-0">
+                                    <h5 class="modal-title fw-bold">@lczSearch["FilterTitle"]</h5>
+                                    <button type="button " class="btn btn-primary" data-bs-dismiss="modal" aria-label="Close" @onclick="ModalFilterClose">X</button>
+                                </div>
+                                <div class="modal-body ">
+                                    <div class="col-12 row ">
+                                        <div class="col-6 text-center">
+                                            <label class=@GlobalVariables.LabelClass>@lczSearch["SelectedColumns"]</label>
+                                            <div class=" col-12 row">
+                                                <div class="col-1">
+                                                    <button type="button" class="btn btn-primary" @onclick="@(() => MoveUpDn(true,selectedItemName))"><i><img src="/img/arrow-alt-up.png" /></i></button>
+                                                    <button type="button" class="btn btn-primary" @onclick="@(() => MoveUpDn(false,selectedItemName))"><i><img src="/img/arrow-alt-dn.png" /></i></button>
+                                                </div>
+                                                <div class="col-11">
+                                                    <select class="form-select" size="@dtItems.Columns.Count" aria-label="Search Columns" @bind=selectedItemName>
+                                                        @{
+                                                            lstColsTemp = lstCols.Where(x => x.Available).ToList();
+                                                            foreach (Column item in lstColsTemp)
+                                                            {
+                                                                if (item.Name.StartsWith("dtpFrom"))
+                                                                {
+                                                                    <option value=@item.Name.Remove(0, 7)>@item.Name.Remove(0, 7)</option>
+                                                                }
+                                                                else if (item.Name.StartsWith("chkNot"))
+                                                                {
+                                                                    <option value=@item.Name.Remove(0, 6)>@item.Name.Remove(0, 6)</option>
+                                                                }
+                                                                else if (item.Name.StartsWith("txt"))
+                                                                {
+                                                                    <option value=@item.Name.Remove(0, 3)>@item.Name.Remove(0, 3)</option>
+                                                                }
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-1 align-content-center text-center">
+                                            <button type="button" class="btn btn-primary" @onclick="@(() => AddColFilter(false,selectedItemName))"><i><img src=@(localizer["dir"]== "ltr" ? "/img/angle-double-right.png" : "/img/angle-double-left.png") /></i></button>
+                                            <button type="button" class="btn btn-primary" @onclick="@(() => AddColFilter(true,selectedItemName))"><i><img src=@(localizer["dir"]== "ltr" ? "/img/angle-double-left.png" : "/img/angle-double-right.png") /></i></button>
+                                        </div>
+                                        <div class="col-5 text-center">
+                                            <label class=@GlobalVariables.LabelClass>@lczSearch["AvailableColumns"]</label>
+                                            <select class="form-select " size="@dtItems.Columns.Count" aria-label="Avelable Columns" @bind=selectedItemName>
+                                                @{
+                                                    lstColsTemp = lstCols.Where(x => x.Available==false).ToList();
+                                                }
+                                                @foreach (Column item in lstColsTemp)
+                                                {
+                                                    if (item.Name.StartsWith("dtpFrom"))
+                                                    {
+                                                        <option value=@item.Name.Remove(0, 7)>@item.Name.Remove(0, 7)</option>
+                                                    }
+                                                    else if (item.Name.StartsWith("chkNot"))
+                                                    {
+                                                        <option value=@item.Name.Remove(0, 6)>@item.Name.Remove(0, 6)</option>
+                                                    }
+                                                    else if (item.Name.StartsWith("txt"))
+                                                    {
+                                                        <option value=@item.Name.Remove(0, 3)>@item.Name.Remove(0, 3)</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row ">
+                                        <label id="SearchPeriod" class="@GlobalVariables.LabelClass col-sm-5 align-content-center text-start">@lczSearch["SearchPeriod"]</label>
+                                        <div class="col-sm-2">
+                                            <input class="@GlobalVariables.NumberClass" aria-labelledby="SearchPeriod" type="number" min="1" max="10000" @bind=SearchPeriod />
+                                        </div>
+                                        <label id="Day" class="@GlobalVariables.LabelClass col-sm-5 align-content-center">@lczSearch["Day"]</label>
+                                    </div>
+                                    <div class="row">
+                                        <div class="justify-content-center">
+                                            <button type="button" class="btn btn-primary" @onclick="@SaveFilterModal">@localizer["OK"]</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer justify-content-start border-0">
+                <button type="button" class="btn btn-secondary" @onclick="ModalCancel">@localizer["Cancel"]</button>
+                <button type="button" class="btn btn-danger" @onclick="ModalOk">@localizer["OK"]</button>
+                <label class="@GlobalVariables.LabelClass px-lg-5">العدد : @dt.Rows.Count</label>
+
+                @if (dtItems.Rows.Count > 10)
+                {
+                    <div class=" d-flex flex-row flex-nowrap  p-2">
+
+                        <select class=@GlobalVariables.ComboboxClass @onchange="(e)=>ChangeItemsPerPage(e)">
+                            <option value="10">10</option>
+                            <option value="100">100</option>
+                            <option value="1000">1000</option>
+                        </select>
+
+                        <ul class="pagination mb-0">
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="FirstPage">&laquo;</button>
+                            </li>
+                            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                                <button class="page-link" @onclick="PreviousPage"> &lsaquo;</button>
+                            </li>
+                            <li class="page-item @(1 == currentPage ? "active" : "")">
+                                <button class="page-link" @onclick="() => GoToPage(1)">1</button>
+                            </li>
+                            @if (totalPages <= 10)
+                            {
+                                @for (int i = 2; i < totalPages; i++)
+                                {
+                                    int pageNumber = i;
+
+                                    <li class="page-item @(i == currentPage ? "active" : "")">
+                                        <button class="page-link" @onclick="() => GoToPage(pageNumber)">@i</button>
+                                    </li>
+                                }
+                            }
+                            else 
+                            {
+                                if (currentPage < 5 )
+                                {
+                                    @for (int i = 2; i <= currentPage + 2; i++)
+                                    {
+                                        int pageNumber = i;
+
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <button class="page-link" @onclick="() => GoToPage(pageNumber)">@i</button>
+                                        </li>
+                                    }
+                                }
+                           
+                                else if (currentPage > 4 && currentPage + 3 < totalPages)
+                                {
+                                    <li class="page-item">
+                                        <button class="page-link" @onclick="() => GoToPage(currentPage - 2)">...</button>
+                                    </li>
+                                    @for (int i = currentPage - 2; i <= currentPage + 2; i++)
+                                    {
+                                        int pageNumber = i;
+
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <button class="page-link" @onclick="() => GoToPage(pageNumber)">@i</button>
+                                        </li>
+                                    }
+                                }
+                                else if ( currentPage + 4 > totalPages)
+                                {
+                                    <li class="page-item">
+                                        <button class="page-link" @onclick="() => GoToPage(currentPage - 2)">...</button>
+                                    </li>
+                                    @for (int i = currentPage - 2; i < totalPages; i++)
+                                    {
+                                        int pageNumber = i;
+
+                                        <li class="page-item @(i == currentPage ? "active" : "")">
+                                            <button class="page-link" @onclick="() => GoToPage(pageNumber)">@i</button>
+                                        </li>
+                                    }
+                                }
+
+                                if (currentPage < totalPages - 4 )
+                                {
+                                    <li class="page-item">
+                                        <button class="page-link" @onclick="() => GoToPage(currentPage + 2)">...</button>
+                                    </li>
+                                }
+                            } 
+
+                            <li class="page-item @(totalPages == currentPage ? "active" : "")">
+                                <button class="page-link" @onclick="() => GoToPage(totalPages)">@totalPages</button>
+                            </li>
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="NextPage">&rsaquo;</button>
+                            </li>
+                            <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                                <button class="page-link" @onclick="LastPage">&raquo;</button>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            </div>
+    
+        </div>
+    </div>
+}

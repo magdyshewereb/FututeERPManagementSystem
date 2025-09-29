@@ -1,0 +1,111 @@
+﻿@typeparam TModel
+@using System.Data
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<DynamicGrid> localizer
+
+@if (GridHost?.Data != null && GridHost.Data.Columns.Count > 0)
+{
+    <div class="table-responsive">
+
+        <div class="d-flex mb-2">
+            <!-- Search box -->
+            <input class="form-control me-2" placeholder="@GridHost.Localizer?["Search..."]"
+                   @bind="SearchText" />
+
+            <!-- Column filter -->
+            @if (GridHost?.Data != null && GridHost.Data.Columns.Count > 0)
+            {
+                <SearchColumnsSelector TModel="TModel" Columns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
+                                       InvisibleColumns="GridHost.InvisibleColumns"
+                                       SelectedColumns="SelectedSearchColumns"
+                                       SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)"
+                                       Localizer="GridHost.Localizer" />
+            }
+        </div>
+
+        <div dir="@(GridHost.IsArabic ? "rtl" : "ltr")">
+            <table class="table modern-table w-100">
+                <thead>
+                    <tr>
+                        <th style="width:50px;">#</th>
+                        @foreach (DataColumn col in GridHost.Data.Columns.Cast<DataColumn>().Reverse())
+                        {
+                            if (!GridHost.InvisibleColumns.Contains(col.ColumnName))
+                            {
+                                <th @onclick="() => Sort(col.ColumnName)" style="cursor:pointer">
+                                    @GridHost.Localizer?[col.ColumnName]
+                                    @(SortColumn == col.ColumnName ? (SortAscending ? " ▲" : " ▼") : "")
+                                </th>
+                            }
+                        }
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var row in PagedData.Select((data, index) => new { data, index }))
+                    {
+                        var isSelected = GridHost.SelectedRow == row.data;
+                        <tr @onclick="() => SelectRow(row.data)"
+                            class="@(isSelected ? "selected-row" : "")"
+                            style="cursor:pointer">
+                            <td>@((_pageIndex * _pageSize) + row.index + 1)</td>
+                            @foreach (DataColumn col in GridHost.Data.Columns.Cast<DataColumn>().Reverse())
+                            {
+                                if (!GridHost.InvisibleColumns.Contains(col.ColumnName))
+                                {
+                                    <td>@GetDisplayValue(row.data, col)</td>
+                                }
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination & PageSize -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="d-flex align-items-center">
+            <select class="form-select form-select-sm w-auto" @onchange="OnPageSizeChanged">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @( _pageIndex == 0 ? "disabled" : "" )">
+                    <button class="page-link" @onclick="FirstPage" title=@localizer["First"]>
+                        @(GridHost.IsArabic ? "⏭️" : "⏮️")
+                    </button>
+                </li>
+                <li class="page-item @( _pageIndex == 0 ? "disabled" : "" )">
+                    <button class="page-link" @onclick="PrevPage" title=@localizer["Previous"]>
+                        @(GridHost.IsArabic ? "→" : "←")
+                    </button>
+                </li>
+
+                @for (int i = 0; i < TotalPages; i++)
+                {
+                    <li class="page-item @( _pageIndex == i ? "active" : "" )">
+                        <button class="page-link" @onclick="() => GoToPage(i)">@(i + 1)</button>
+                    </li>
+                }
+
+                <li class="page-item @( _pageIndex >= TotalPages - 1 ? "disabled" : "" )">
+                    <button class="page-link" @onclick="NextPage" title=@localizer["Next"]>
+                        @(GridHost.IsArabic ? "←" : "→")
+                    </button>
+                </li>
+                <li class="page-item @( _pageIndex >= TotalPages - 1 ? "disabled" : "" )">
+                    <button class="page-link" @onclick="LastPage" title=@localizer["Last"]>
+                        @(GridHost.IsArabic ? "⏮️" : "⏭️")
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </div>
+}

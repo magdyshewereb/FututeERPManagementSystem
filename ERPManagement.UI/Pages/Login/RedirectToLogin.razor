@@ -1,0 +1,38 @@
+﻿
+<h3>You are not authorized to see this page, please contact the IT manager to give you this privilage.</h3>
+@* @inject NavigationManager Navigation
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    var authenticationState = await AuthenticationStateTask;
+
+    //    if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
+    //    {
+    //        Navigation.NavigateTo("/Login", true);
+    //    }
+    //}
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var authenticationState = await AuthenticationStateTask;
+
+                if (authenticationState?.User?.Identity is not null)
+                {
+                    Navigation.NavigateTo("/Login", true);
+                }
+            }
+            catch
+            {
+                Navigation.NavigateTo("/ChangeServer", false);
+            }
+        }
+
+    }
+} *@

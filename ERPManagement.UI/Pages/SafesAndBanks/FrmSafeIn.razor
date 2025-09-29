@@ -1,0 +1,42 @@
+﻿@page "/FrmSafeIn"
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.EInvoices
+@inject IStringLocalizer<FrmSafeIn> localizer;
+@inject DataModels.Accounting.MasterData.Currency.CurrencyService currencyService;
+@inject ERPManagement.UI.DataModels.EInvoices.CurrencyService EcurrencyService;
+@attribute [Authorize(Roles = "ERP.SafesAndBanks.SafeTransactions.frmSafeIn")]
+
+@if (valueLists.Count > 0)
+{
+    if (IsInfoMBVisible)
+    {
+        <ModalDialog DialogType="MBType" OnClose="Close" Text="@InfoMessage"></ModalDialog>
+    }
+    if (IsSearchMDVisible)
+    {
+        <Search dtItems="dtJVs" ColWidth="@lstSearchWidth" InvisibleColumns="@JVDetailsInvisibleColumns" isNaveMode="@isNavMode" localizer="@localizer" OnClose="Close"
+                ColID="@("JVID")" FormName="ERP.Accounting.Search.frmJVSearchReport" OnOk="FillData" OnDoubleClickCallback="FillData"></Search>
+    }
+    else
+    {
+        <Buttons hiddenButtons=hiddenButtons   AddFun="Add" OnClearControlsCallback="ClearControls" OnCopyCallback="Copy" OnDeleteCallback="Delete"
+        OnNextCallback="Next" OnPreviousCallback="Previous" OnSearchCallback="Search" UpdateFun="Update" SearchCode="@SearchCode"
+        formName=@formName />
+        <br />
+        <CustomForm Model="@currentObject" InvisibleColumns=invisibleColumns localizer=localizer
+        valueLists=valueLists isNavMode="@isNaveMode" _ControlsPerRow=4 ></CustomForm>
+        <hr />
+        @*
+        @if (currencies == null)
+        {
+            <h3>Loading....</h3>
+        }
+        else
+        {
+            <DataGrid Items="@currencies" InvisibleColumns=invisibleColumns localizer=localizer valueLists=valueLists
+                      OnItemSelected="HandleItemSelected" />
+        } *@
+    }
+}
+
+

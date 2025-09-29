@@ -1,0 +1,27 @@
+﻿@page "/frmConsigneesTree"
+@using ERPManagement.UI.DataModels.CustomsClearence
+@using ERPManagement.UI.DataModels.General
+@using ERPManagement.UI.GeneralClasses
+@using ERPManagement.UI.DataModels.CustomsClearence;
+@inject IStringLocalizer<FrmConsigneesTree> localizer;
+@inject ERPManagement.UI.DataModels.CustomsClearence.ConsigneesService consigneeService
+@inject ERPManagement.UI.DataModels.General.CountryService countryService;
+@inject ERPManagement.UI.DataModels.General.CityService cityService;
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+@attribute [Authorize(Roles = "ERP.CustomsClearence.MasterData.frmConsigneesTree")]
+
+@if (valueLists.Count>0)
+{
+
+    <CascadingValue Value="@currentObject" Name="currentObj">
+        <CascadingValue Value="@selectedNode" Name="selectedObj">
+            <TreeComponent TItem="Consignee" Tlevel="ConsigneesLevel" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
+                           ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" TableName="@TableName" LevelsCol="@LevelsCol" LevelsTable="@LevelsTable" LevelsWidthCol="@LevelsWidthCol"
+                                hiddenButtons="@hiddenButtons" invisibleColumns="@invisibleColumns" valueLists="@valueLists"
+                                OnClearControlsCallback="ClearControls" OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" TreeAddDataFun="TreeAddData" OnDeleteCallBack="TreeDeleteData"
+                           TreeUpdateDataFun="TreeUpdateData" OnCancelCallBack="Cancel" OnCboValueChangedCallBack="cboCountiesValueChanges" localizer="@localizer" >
+            </TreeComponent>
+        </CascadingValue>
+    </CascadingValue>
+}

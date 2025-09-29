@@ -1,0 +1,21 @@
+﻿@page "/frmCostCenterTree"
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.GeneralClasses
+@using ERPManagement.UI.DataModels.Accounting;
+@inject IStringLocalizer<FrmCostCenterTree> localizer;
+@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+@attribute [Authorize(Roles = "ERP.Accounting.MasterData.frmCostCenterTree")]
+
+<CascadingValue Value="currentObject"  Name="currentObj">
+    <CascadingValue Value="selectedNode" Name="selectedObj">
+    <TreeComponent TItem="CostCenter" Tlevel="CostCenterLevel" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
+               ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" TableName="@TableName" LevelsCol="@LevelsCol" LevelsTable="@LevelsTable" LevelsWidthCol="@LevelsWidthCol"
+                    hiddenButtons="@hiddenButtons" invisibleColumns="@invisibleColumns" 
+                       OnClearControlsCallback="ClearControls" OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" OnCboValueChangedCallBack="cboCountiesValueChanges"
+                       TreeAddDataFun="TreeAddData" OnDeleteCallBack="TreeDeleteData" TreeUpdateDataFun="TreeUpdateData" OnCancelCallBack="Cancel" localizer="@localizer">
+        </TreeComponent>
+    </CascadingValue>
+ </CascadingValue>
+ @*valueLists="@valueLists"*@

@@ -1,0 +1,33 @@
+﻿@typeparam TModel
+@* @inherits PageLayoutComponent<TModel> @ref="gridComponent" *@
+
+@* <CascadingValue Value="ActionsAdapter">
+    <CascadingValue Value="NavigationsAdapter">
+        <CascadingValue Value="GridAdapter">
+            <div class="page-layout">
+                <DynamicButtons TModel="TModel" />
+                <DynamicGrid TModel="TModel" />
+                @BodyContent
+            </div>
+        </CascadingValue>
+    </CascadingValue>
+</CascadingValue> *@
+ 
+@* <CascadingValue Value="this">
+    @BodyContent
+</CascadingValue> *@
+
+<div class="page-layout">
+
+
+    <DynamicButtons TModel="TModel"
+                    BaseActions="@(ExternalActions )"
+                    BaseNavigations="@(ExternalNavigations  )" />
+
+ 
+        @BodyContent
+ 
+    <DynamicGrid TModel="TModel" GridHost="@(ExternalGrid)" />
+
+</div>
+

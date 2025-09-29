@@ -1,0 +1,58 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime js
+@inject IHttpContextAccessor _httpContextAccessor
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+<PageTitle>ERP</PageTitle>
+
+<AuthorizeView>
+    <Authorized>
+        <div id="mySidebar" class="sidebar">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">X</a>
+            <NavTree />
+        </div>
+        <div id="main">
+            <div class="top-row row">
+                <div class="col-sm-3">
+                    <button id="openNav" class="openbtn col-sm-0" onclick="openNav()">☰ </button>
+                    <LanguageSelector></LanguageSelector>
+                </div>
+
+                <div class="col-sm-4">
+                    <lable class="">@model.CompanyName <span class="text-color" style="color: #ffc600 !important;"> @model.BranchName</span></lable>
+                </div>
+
+                <div class="col-sm-4">
+                    <lable class="">Welcome User: <span class="text-color" style="color: #ffc600 !important;">@model.Username</span></lable>
+                </div>
+                <div class="col-sm-1">
+                    <a href="/login/@isLogin" style="float:inline-end " class="text-color">@language["Logout"]</a>
+                </div>
+            </div>
+            <article class="content px-4">
+                @Body
+            </article>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <ERPManagement.UI.Pages.Login.RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
+<script suppress-error="BL9992" data-main="payment-js">
+    function openNav() {
+        document.getElementById("mySidebar").style.width = "300px";
+        document.getElementById("main").style.@language["MarginDirection"] = "300px";
+        document.getElementById("mySidebar").style.@language["SidebarDirection"] = "0";
+        document.getElementById("openNav").style.display = "none";
+
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById("main").style.@language["MarginDirection"]  = "0";
+        document.getElementById("openNav").style.display = "inline-block";
+
+    }
+
+</script>
+

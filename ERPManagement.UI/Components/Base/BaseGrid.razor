@@ -1,0 +1,64 @@
+﻿@using System.Data
+<div>
+    <!-- Search Box -->
+    <input type="text" class="form-control mb-2" placeholder="Search..."
+           @bind="searchText" @bind:event="oninput" />
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-striped">
+
+            <thead>
+                <tr>
+                    @foreach (DataColumn col in Data.Columns)
+                    {
+                        if (!InvisibleColumns.Contains(col.ColumnName))
+                        {
+                            <th @onclick="() => SortBy(col.ColumnName)">
+                                @col.ColumnName
+                                @if (sortColumn == col.ColumnName)
+                                {
+                                    <span>@(sortAscending ? "▲" : "▼")</span>
+                                }
+                            </th>
+                        }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (DataRow row in PagedData.Rows)
+                {
+                    <tr>
+                        @foreach (DataColumn col in PagedData.Columns)
+                        {
+                            if (!InvisibleColumns.Contains(col.ColumnName) && PagedData.Columns.Contains(col.ColumnName))
+                            {
+                                <td>@row[col]</td>
+                            }
+                        }
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(currentPage - 1)">Previous</button>
+            </li>
+            @for (int i = 1; i <= TotalPages; i++)
+            {
+                <li class="page-item @(currentPage == i ? "active" : "")">
+                    <button class="page-link" @onclick="() => ChangePage(i)">@i</button>
+                </li>
+            }
+            <li class="page-item @(currentPage == TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(currentPage + 1)">Next</button>
+            </li>
+        </ul>
+    </nav>
+</div>
+ 

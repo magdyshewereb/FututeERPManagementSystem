@@ -1,0 +1,65 @@
+﻿@page "/ChangeServer"
+@layout LoginLayout
+@inject NavigationManager Nav
+@inject IStringLocalizer<ChangeServer> localizer
+@inject GlobalFunctions globalFunctions
+@inject IHttpContextAccessor _httpContextAccessor;
+
+@if (isModalVisible)
+{
+    <ModalDialog DialogType="@ModalDialog.ModalDialogType.Ok"  Text="@errorMessage" OnClose="Close"  Title=""></ModalDialog>
+}
+
+<EditForm Model="@model" OnValidSubmit="@btnOkClick">
+    <div>
+        <br /><br /><br /><br /><br />
+    </div>
+    <div>
+        <h3 style="font-weight:bold; color:purple">@localizer["title"]</h3>
+    </div>
+    <div>
+        <br />
+        <div class="col-9 row" style="text-align:left; font-weight:bold">
+            <span class="col-9 text-danger">@errorMessage</span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-3">
+            <label class=@GlobalVariables.LabelClass>@localizer["lblServer"]</label>
+        </div>
+        <div class="col-sm-6">            
+            <input class=@GlobalVariables.TextBoxClass @bind="model.Server" placeholder="@localizer["lblServer"]" />
+        </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <div class="col-sm-3">
+            <label class=@GlobalVariables.LabelClass>@localizer["lblUserID"]</label>
+        </div>
+        <div class="col-sm-6">
+            <input type="text" class=@GlobalVariables.TextBoxClass @bind="model.DBUser" placeholder="@localizer["lblUserID"]" />
+        </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <div class="col-sm-3">
+            <label class=@GlobalVariables.LabelClass>@localizer["lblDBPassword"]</label>
+        </div>
+        <div class="col-sm-6">
+            <input type="password" class=@GlobalVariables.TextBoxClass @bind="model.DBPassword" placeholder="@localizer["lblDBPassword"]" />
+        </div>
+    </div>
+    <br />
+    <div class="form-group row">
+        <span class="col-sm-3"></span>
+        <div class="col-sm-6">
+            <button type="submit" class="buttonload col-sm-6">
+                <i class="@loading"></i>@localizer["btnOK"] 
+            </button>
+            @*<a href="/login" class="col-sm-5 btn btn-outline-primary">@localizer["Login"]</a>*@
+        </div>
+
+    </div>
+    <br />
+   
+</EditForm>

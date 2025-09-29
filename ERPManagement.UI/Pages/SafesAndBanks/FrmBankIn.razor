@@ -1,0 +1,164 @@
+﻿@page "/FrmBankIn"
+@using System.Data;
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.Accounting;
+@using ERPManagement.UI.DataModels.Accounting.MasterData
+@using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
+@using ERPManagement.UI.DataModels.Defaults
+@using ERPManagement.UI.DataModels.Privilege
+@using ERPManagement.UI.DataModels.SafesAndBanks
+@using ERPManagement.UI.DataModels.SafesAndBanks;
+@inject IStringLocalizer<FrmBankIn> localizer;
+@inject ERPManagement.UI.DataModels.SafesAndBanks.BankInService bankInService
+@inject ERPManagement.UI.DataModels.SafesAndBanks.BanksService banksService
+@inject ERPManagement.UI.DataModels.SafesAndBanks.SafesService safesService
+@inject ERPManagement.UI.DataModels.SafesAndBanks.BankInDetailsService bankInDetailsService
+@inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsService subAccountsService
+@inject CurrencyService currencyService;
+@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject ERPManagement.UI.DataModels.Accounting.JVService jvService
+@inject ERPManagement.UI.DataModels.Accounting.JVDetailsService jvDetailService
+@inject ERPManagement.UI.DataModels.Accounting.FiscalYearService fiscalYearService
+@inject ERPManagement.UI.DataModels.Defaults.JVDefaultsService jvDefaultService
+@inject ERPManagement.UI.DataModels.Privilege.SearchPeriodService searchPeriodService
+@inject ERPManagement.UI.DataModels.Privilege.SearchColumnsService searchColumnService
+@attribute [Authorize(Roles = "ERP.SafesAndBanks.BankTransactions.frmBankIn")]
+
+@if (valueLists.Count > 0)
+{
+    if (IsInfoMBVisible){
+        <ModalDialog DialogType="MBType" OnClose="Close" Text="@InfoMessage"></ModalDialog>
+    }
+    if (IsSearchMDVisible)
+    {
+        <Search dtItems="dtbankIns" ColWidth="@lstSearchWidth" InvisibleColumns="@BankInDetailsInvisibleColumns" isNaveMode="@isNavMode" localizer="@localizer" OnClose="Close"
+                ColID="@("BankInID")" FormName="ERP.SafesAndBanks.Search.frmBankInSearchReport" OnOk="FillData" OnDoubleClickCallback="FillData"></Search>
+    }
+    else
+    {
+         <Buttons ValidateDataFun="ValidateData" AddFun="Add" OnClearControlsCallback="ClearControls" OnCopyCallback="Copy" OnDeleteCallback="Delete"
+                 OnNextCallback="Next" OnPreviousCallback="Previous" OnSearchCallback="btnSearchClick" UpdateFun="Update" SearchCode=""
+             OnChangeStateCallback="ChangeNavMode" OnCancelCallback="Cancel" BtnDeleteClickFun ="CheckBeforeDelete"
+                 formName=@localizer["BankIn"] hiddenButtons="@hiddenButtons" />
+
+              @* -- Header Data *@ 
+        <div class="form-inline row">
+            <label id="BankInDate" class="@GlobalVariables.LabelClass col-sm-1">@localizer["BankInDate"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="BankInDate" type="date" @bind=BankInDate readonly="@isNavMode" />
+            </div>
+            <div class="col-sm-3 radio-aline">
+                <InputRadioGroup @bind-Value="bankInObj.IsCheck" Name="transactionType">
+                    <InputRadio Value="true" disabled="@isNavMode" /> Check
+                    <br />
+                    <InputRadio Value="false" disabled="@isNavMode" /> Deposit
+                </InputRadioGroup>
+            </div>
+            <label id="CheckNo" class="@GlobalVariables.LabelClass col-sm-1">@localizer["CheckNo"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="CheckNo" type="text" @bind=bankInObj.CheckNo readonly="@isNavMode" />
+            </div>
+            <label id="CheckDate" class="@GlobalVariables.LabelClass col-sm-1">@localizer["CheckDate"]</label>
+            <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="CheckDate" type="date" @bind=bankInObj.CheckDate readonly="@isNavMode" />
+            </div>
+        </div>
+
+        <div class="form-inline row">
+            <label id="BankID" class="@GlobalVariables.LabelClass col-sm-1">@localizer["BankID"]</label>
+            <div class="col-sm-4">
+               <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="TransTypeID" @bind="bankInObj.BankID" disabled="@isNavMode">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtbanks.Rows)
+                    {
+                        <option value="@item["BankID"]"> @item["BankName"]</option>
+                    }
+                </select> 
+            </div>
+            <div class="col-sm-1 px-1 ">
+                <button id="BankSearch" @onclick=btnBankSearch class="btnborder erp-btn form-control button-auto" disabled="@(isNavMode )"><i><img src="/img/search.png" /></i></button>
+            </div>
+            <label id="CurrencyID" class="@GlobalVariables.LabelClass col-sm-1">@localizer["CurrencyID"]</label>
+            <div class="col-sm-2">
+                <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="CurrencyID" @bind="bankInObj.CurrencyID" disabled="@isNavMode">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtCurrency.Rows)
+                    {
+                        <option value="@item["CurrencyID"]"> @item["CurrencyName"]</option>
+                    }
+                </select>
+            </div>
+            <label id="ExchangeRate" class="@GlobalVariables.LabelClass col-sm-1">@localizer["ExchangeRate"]</label>
+            <div class="form-group col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="ExchangeRate" type="text" @bind-value=bankInObj.ExchangeRate readonly="@isNavMode" />
+            </div>
+        </div>
+
+        <div class="form-inline row">
+            <label id="ChargedPerson" class="@GlobalVariables.LabelClass col-sm-1">@localizer["ChargedPerson"]</label>
+            <div class="form-group col-sm-5">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="ChargedPerson" type="text" @bind-value=bankInObj.ChargedPerson readonly="@isNavMode" />
+            </div>
+            <label id="ReceivingBank" class="@GlobalVariables.LabelClass col-sm-1">@localizer["ReceivingBank"]</label>
+            <div class="form-group col-sm-5">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="ReceivingBank" type="text" @bind-value=bankInObj.ReceivingBank readonly="@isNavMode" />
+            </div>
+        </div>
+        <div class="form-inline row" >
+            <label id="Notes" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Notes"]</label>
+            <div class="col-sm-5">
+                <textarea cols="2" class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="JVDate" @bind=bankInObj.Notes readonly="@isNavMode" />
+            </div>
+            <label id="CheckStatus" class="@GlobalVariables.LabelClass col-sm-1">@localizer["lblCheckStatus"]</label>
+            <div class="col-auto px-2 ">
+                <button id="CheckStatus" @onclick=btnChangeStatus class="btnborder erp-btn form-control" hidden=@(!(isNavMode && !bankInObj.Collected&& !bankInObj.Returned && lblCheckStatus!=null))>@localizer["btnChangeStatus"]</button>
+            </div>
+            <label id="CheckBinder" class="@GlobalVariables.LabelClass col-sm-1">@localizer["CheckBinder"]</label>
+            <div class="col-sm-2">
+                <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="BinderSafeID" @bind="bankInObj.BinderSafeID" disabled="@isNavMode">
+                    <option value="-1" hidden></option>
+                    @foreach (DataRow item in dtsafes.Rows)
+                    {
+                        <option value="@item["SafeID"]"> @item["SafeName"]</option>
+                    }
+                </select>
+            </div>
+        </div>
+        @* -- Grid Details Data *@ 
+        <div style="overflow: auto;height: 500px; background-color: aliceblue;">
+            @if (lstJVDetails == null)
+            {
+                <h3>Loading....</h3>
+            }
+            else
+            {
+                if (currentState == GlobalVariables.States.NavMode)
+                {
+                    <DataGrid @ref="gridComponentBankInDetails" Items="@lstBankInDetails" InvisibleColumns=BankInDetailsInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                }
+                else
+                {
+                    <EditableGrid TItem="BankInDetails" itemsPerPage="10" Items="@lstBankInDetails"  ColWidth="@lstDetailGridWidth" OnCellUpdateFunc="CellUpdate" OnCellListSelectFunc="CellListChanged"
+                            InvisibleColumns=BankInDetailsInvisibleColumns localizer=localizer valueLists=valueLists lstFilters="lstFilters" dts="ds"  />
+                }
+            }
+        </div>
+
+        @* -- Header Data Summary *@
+        <div class="form-inline row">
+            <label id="Total" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Total"]</label>
+        <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Total" type="text" @bind-value=bankInObj.Total readonly="@isNavMode" />
+        </div>
+            <label id="SenderBankExpense" class="@GlobalVariables.LabelClass col-sm-1">@localizer["SenderBankExpense"]</label>
+        <div class="col-sm-2">
+                <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="SenderBankExpense" type="text" @bind-value=bankInObj.SenderBankExpense readonly="@isNavMode" />
+        </div>
+        <label id="Diff" class="@GlobalVariables.LabelClass col-sm-1">@localizer["Diff"]</label>
+        <div class="col-sm-2">
+            <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Diff" type="text" @bind-value=diff readonly="@isNavMode" />
+        </div>
+    </div>
+    }
+}

@@ -1,0 +1,163 @@
+﻿.tree {
+    list-style: none;
+    padding-left: 0;
+    /*    text-align:right;*/
+    padding-inline-start: 0;
+}
+.li{
+    padding:10px 0 10px 0;
+}
+.link{
+    color:#ffffff;
+    font-size:18px
+}
+a:link {
+    text-decoration: none;
+    color: #ffffff;
+}
+
+   /* a:visited {
+        text-decoration: none;
+        color: #FFC600;
+    }*/
+
+.link:hover {
+    text-decoration: underline;
+    color: #FFC600
+}
+
+a:active {
+    text-decoration: underline;
+    color: #FFC600
+}
+    .tree > li {
+        margin: 0;
+        padding: 0;
+        position: relative;
+        line-height: 1.6;
+    }
+
+        /* Toggle button styling */
+        .tree > li > span.toggle-expanded span {
+            margin-right: 0.5em;
+            cursor: pointer;
+            color: #FFC600
+        }
+        .tree > li > span.toggle-collapsed {
+            margin-right: 0.5em;
+            cursor: pointer;
+            /*color: #007bff;*/
+            color: #ffffff;
+        }
+
+            .tree > li > span.toggle:hover {
+                text-decoration: underline;
+            }
+
+        .tree > li > span.toggle-collapsed span.rtl::before {
+            content: "\2B9C"; /* Right-pointing triangle */
+            margin: 0 10px 0 10px;
+        }
+        .tree > li > span.toggle-collapsed span.ltr::before {
+            content: " \27A4 "; /* Right-pointing triangle */
+            margin: 0 10px 0 10px;
+        }
+        .tree > li > span.toggle-expanded::before {
+            content: " \2B9F "; /* Right-pointing triangle */
+            margin: 0 15px 0 15px;
+            color: #FFC600
+        }
+            
+
+    /* Nested list styling */
+.tree ul {
+    list-style: none;
+    /*padding-left: 0;*/
+    margin: 0;
+}
+
+        .tree ul li {
+            margin: 0;
+            padding: 0;
+            position: relative;
+            line-height: 1.6;
+        }
+
+            /* Nested toggle button styling */
+            /*.tree ul li > span.toggle-collapsed*/
+            .tree ul li > span.toggle-expanded span{
+                margin-right: 0.5em;
+                cursor: pointer;
+                color: #FFC600
+            }
+
+
+                .tree ul li > span.toggle-collapsed:hover {
+                    text-decoration: underline;
+                }
+
+            .tree ul li > span.toggle-collapsed span.ltr::before {
+                content: " \27A4 "; /* Right-pointing triangle */
+                margin: 0 10px 0 10px;
+            }
+            .tree ul li > span.toggle-collapsed span.rtl::before {
+                content: " \2B9C "; /* Right-pointing triangle */
+                margin: 0 15px 0 15px;
+            }
+            .tree ul li > span.toggle-expanded::before {
+                content: " \2B9F "; /* Right-pointing triangle */
+                margin: 0 15px 0 15px;
+                color: #FFC600
+            }
+
+            /* Nested list within list styling */
+            .tree ul li > ul.nested {
+                display: none;
+                padding-left: 0em;
+            }
+
+            .tree ul li > span.toggle.collapsed::before {
+                content: "\27A4";
+            }
+
+            .tree ul li > span.toggle.expanded::before {
+                content: "\2B9F";
+                color: #FFC600
+            }
+
+            .tree ul li.expanded > ul.nested {
+                display: block;
+            }
+
+            /* Text styles */
+            .tree > li > span,
+            .tree ul li > span {
+                font-size: 16px;
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            .tree ul li > ul.nested {
+                font-size: 16px;
+                font-weight: normal;
+                color: #ffffff;
+                /*margin-left: 45px;*/
+                margin: 0 10px;
+            }
+.tree li ul li ul > li::before {
+    content: "\2022";
+    margin-inline-end:15px;
+}
+/*@container body (dir: right) {
+    .tree ul li > span.toggle.collapsed::before {
+        content: "\002BC7";
+    }
+
+    .tree > li > span.toggle-collapsed::before {
+        content: " \002BC7 ";*/ /* Right-pointing triangle */
+    /*}
+}*/
+ul {
+    padding-inline-start: 15px;
+    list-style: none
+}

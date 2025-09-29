@@ -1,0 +1,19 @@
+﻿@using System.Globalization
+@using Microsoft.Extensions.Localization;
+@using Microsoft.Extensions.Options;
+@using Microsoft.JSInterop
+@inject IJSRuntime JS
+@inject NavigationManager Nav
+@inject IServiceProvider serviceProvider
+@inject IStringLocalizer<LanguageSelector> localizer
+
+<label class="col-sm-4">
+    @* @localizer["Language"] *@
+    <select class="form-select form-select-sm" @bind="UICulture">
+        @foreach (var uiculture in serviceProvider.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value.SupportedUICultures!)
+        {
+            <option value="@uiculture">@uiculture.NativeName</option>
+        }
+    </select>
+</label>
+

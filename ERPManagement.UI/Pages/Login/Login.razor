@@ -1,0 +1,132 @@
+﻿@page "/"
+@page "/login"
+@page "/login/{isLogin:bool}"
+
+@using ERPManagement.UI.DataModels.Privilege
+@using ERPManagement.UI.DataModels.Privilege;
+@layout LoginLayout
+@inject NavigationManager navigationManager
+@inject IStringLocalizer<Login> localizer
+@inject UserService userService
+@inject BranchesService branchService
+@inject IHttpContextAccessor _httpContextAccessor;
+@inject UsersBranchesService usersBranchesService;
+@inject UserFormService userFormService;
+@inject UserFormFunctionsService userFormFunctionsService;
+@inject GlobalFunctions globalFunctions;
+
+<div class="d-flex justify-content-center align-items-center vh-100 login-bg">
+    <div class="card shadow-lg p-5 rounded-5 login-card animate__animated animate__fadeIn">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-semibold text-center login-title">
+                <span class="text-gradient">Welcome to</span> ERP BAR
+            </h3>
+            <p class="text-muted text-center small">Please sign in to continue</p>
+            <button id="toggle-theme" type="button" class="btn btn-light btn-sm rounded-circle shadow-sm theme-toggle"
+                    @onclick="ToggleTheme" title="Change Theme">
+                @(isDarkMode ? "☀️" : "🌙")
+            </button>
+             
+        </div>
+
+        @if (isModalVisible)
+        {
+            <ModalDialog DialogType="@ModalDialog.ModalDialogType.Ok" Text="@errorMessage" OnClose="Close" Title=""></ModalDialog>
+        }
+
+        <EditForm Model="@userModel" OnValidSubmit="@btnLoginClick">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">@localizer["lblCompany"]</label>
+                <select class="form-select rounded-3" @bind="userModel.DataBaseName">
+                    @if (databases != null)
+                    {
+                        @foreach (var db in databases)
+                        {
+                            <option value="@db.Key">@db.Value</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">@localizer["lblLanguage"]</label>
+                <select class="form-select rounded-3" @bind-value="systemSettings.Language" @bind-value:event="oninput" @onchange="ChangeLanguage">
+                    <option value="English">English</option>
+                    <option value="Arabic">عربي</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">@localizer["lblUserName"]</label>
+                <input class="form-control rounded-3" @bind="userModel.Username" placeholder="UserName" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">@localizer["lblPassword"]</label>
+                <div class="input-group">
+                    <input type="password" class="form-control rounded-start-3" @bind="userModel.Password" placeholder="Password" />
+                    <span class="input-group-text bg-white rounded-end-3">
+                        <input type="checkbox" id="remember" @bind="userModel.Remember" class="form-check-input me-1" />
+                        <label for="remember" class="form-check-label small">@localizer["chkRemember"]</label>
+                    </span>
+                </div>
+            </div>
+
+            <div class="d-flex flex-column gap-2">
+                <button type="submit" class="btn btn-primary w-100">@localizer["btnLogin"]</button>
+                <a href="/ChangeServer" class="btn btn-outline-primary w-100">@localizer["btnChangeServer"]</a>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+
+<!-- Modal -->
+@if (showBranchesDialog)
+{
+    <div class="modal" style="display:block ; background: rgba(0,0,0,0.5)" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered" >
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #0056b3; /* أزرق غامق */ color:azure ; padding:5px">
+                    <h5 class="modal-title" >ERP BAR</h5>
+                    <button type="button" class="close" data-dismiss="model" aria-label="Close" @onclick="btnCloseDialogClick">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body col-12 row align-content-center">
+                    @if (branches?.Count != 0)
+                    {
+                        <lable class=@GlobalVariables.LabelClass>@localizer["lblBranches"]</lable>
+                        <select class=@GlobalVariables.ComboboxClass @bind="userModel.BranchID">
+                        
+                            @* <option value="">-select element-</option> *@
+                            @foreach (var branch in branches)
+                            {
+                                <option value="@branch.BranchID">@branch.BranchNameAr</option>
+                            }
+                        
+                    </select>
+                    }
+                    else
+                    {
+                        <h1 class="text-danger"> User Not Registered in any Branch</h1>
+                    }
+                </div>
+                
+                @if (branches?.Count == 0)
+                {
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary">@localizer["btnOK"]</button>
+                    </div>
+                }
+                else
+                {
+                   <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @onclick="btnOkClick">OK</button>
+                   </div> 
+                }
+                
+            </div>
+        </div>
+    </div>
+}

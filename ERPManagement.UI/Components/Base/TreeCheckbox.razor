@@ -1,0 +1,47 @@
+﻿@typeparam TItem
+@using System.Data;
+@inject IJSRuntime js
+
+@if (lstItems != null)
+{
+    // أي خدمة
+    lstChildItems = lstItems.Where(a => GetPropertyValue(a, ParentIDCol) == ParentId.ToString()).ToList();
+    @foreach (var item in lstChildItems)
+    {
+        if (GetPropertyValue(item, ParentIDCol) == ParentId.ToString())
+        {
+            if (bool.Parse(GetPropertyValue(item, IsMainCol).ToString()))
+            {
+                <li>
+                    <!-- Top level: Parents -->
+                    <a href="" @onclick="() => ToggleParents(int.Parse(GetPropertyValue(item, IDCol).ToString()))" @onclick:preventDefault style="text-decoration:none; color:inherit; ">
+                        @(IsParentExpanded(int.Parse(GetPropertyValue(item, IDCol).ToString())) ? " ◢ " : " 📁 ")
+                    </a>
+                    <input type="checkbox" id="@(GetPropertyValue(item, IDCol))" checked="@(GetChecked(item))" @onclick="(() => {NodeChecked(item);})" @onclick:stopPropagation /> @*   *@
+                    <span>
+                        @GetPropertyValue(item, NoCol) -
+                        @(language["Language"] == "اللغة" ? GetPropertyValue(item, NameCol) : GetPropertyValue(item, NameEnCol))
+                    </span>
+                    <ul class="nested" style="display:@(IsParentExpanded(int.Parse(GetPropertyValue(item, IDCol).ToString()))? "block":"none")">
+                        <!-- Loop through childs -->
+                        <TreeCheckbox TItem="TItem" ParentId="@(int.Parse(GetPropertyValue(item, IDCol).ToString()))" IDCol="@IDCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
+                                      NoCol="@NoCol" ParentIDCol="@ParentIDCol" OnItemCheckedCallback="NodeChecked" isNavMode="@isNavMode"></TreeCheckbox>
+                    </ul>
+                </li>
+            }
+            else
+            {
+                <li >
+                    <span >
+                        <input type="checkbox" class="childNode" id="@(GetPropertyValue(item, IDCol))" checked="@(GetChecked(item))" @onclick="(() => {NodeChecked(item);})" @onclick:stopPropagation />
+                        @GetPropertyValue(item, NoCol) -
+                       <a href="" @onclick:preventDefault style="text-decoration:none; color:inherit;">
+                            @(language["Language"] == "اللغة" ? GetPropertyValue(item, NameCol) : GetPropertyValue(item, NameEnCol))
+                        </a>
+                    </span>
+                </li>
+            }
+
+        }
+    }
+}

@@ -1,0 +1,439 @@
+﻿@page "/FrmSubAccountsTree"
+@using System.Data;
+@using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.EInvoices
+@using ERPManagement.UI.DataModels.General
+@using ERPManagement.UI.DataModels.HR
+@using ERPManagement.UI.DataModels.StockControl
+@using ERPManagement.UI.GeneralClasses
+@using ERPManagement.UI.DataModels.Accounting;
+@inject IStringLocalizer<FrmSubAccountsTree> localizer;
+@inject ERPManagement.UI.DataModels.General.CityService cityService;
+@inject ERPManagement.UI.DataModels.General.AreaService areaService;
+@inject ERPManagement.UI.DataModels.General.LinesService linesService;
+@inject ERPManagement.UI.DataModels.General.TitlesService titlesService;
+@inject ERPManagement.UI.DataModels.General.PositionsService positionService;
+@inject ERPManagement.UI.DataModels.General.PaymentMethodsService paymentMethodService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccounts_ClassificationsService subAccountClassificationService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsService subAccountsService
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsClientSupplierService subAccountsClientSupplierService
+@inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
+@inject ERPManagement.UI.DataModels.Accounting.SuAccountsTypesService subAccountsTypesService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccounts_DetailsService subAccountsDetailsService;
+@inject ERPManagement.UI.DataModels.Accounting.AccountTypeService accountTypeService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsClientSupplierContactsService contactService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsClientSupplierBanksService bankService;
+@inject ERPManagement.UI.DataModels.Accounting.SubAccountsClientCardsService cardService;
+@inject ERPManagement.UI.DataModels.StockControl.PricesTypesService priceTypeService;
+@inject ERPManagement.UI.DataModels.StockControl.StoresService storeService
+@inject ERPManagement.UI.DataModels.HR.EmployeesService employeeService;
+@inject ERPManagement.UI.DataModels.EInvoices.SubAccountsTypesService eInvoiceService;
+@inject BranchesService branchService
+
+@inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
+@inject IJSRuntime js
+@attribute [Authorize(Roles = "ERP.Accounting.MasterData.frmSubAccountsTree")]
+
+@if (valueLists.Count > 0)
+{
+    if (IsInfoMBVisible){
+        <ModalDialog DialogType="MBType" OnClose="ModalDialogClose" Text="@InfoMessage"></ModalDialog>
+    }
+    <CascadingValue Value="subAccObj"  Name="currentObj">
+        <CascadingValue Value="subAccSelectedObj" Name="selectedObj">
+            <TreeComponent TItem="SubAccounts" Tlevel="SubAccounts_Levels" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol" AdditionalCol1="@AdditionalCol1" AdditionalCol2="@AdditionalCol2"
+                           AdditionalCol3="@AdditionalCol3" ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" TableName="@TableName" LevelsCol="@LevelsCol" LevelsTable="@LevelsTable" LevelsWidthCol="@LevelsWidthCol"
+                           hiddenButtons="@hiddenButtons" invisibleColumns="@SubAccInvisibleColumns" valueLists="@valueLists"  localizer="@localizer"
+                           OnClearControlsCallback="ClearControls" OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" OnCboValueChangedCallBack="cboSubAccountTypeValueChanges" OnConfirmCallback="ConfirmAction"
+                           OnDeleteCallBack="TreeDeleteData" OnCancelCallBack="Cancel" ValidateDataFun="ValidateData" TreeAddDataFun="TreeAddData" TreeUpdateDataFun="TreeUpdateData" HasTransactionValidationsFun="HasTransactionValidations">
+                <Tabs>
+                    <TabControl OnTabClickCallback="TabClick">
+                        <TabPage Text="@localizer["TabAccounts"]" IsAdded="true">
+                            @if (isNavMode)
+                            {
+                                foreach (DataRow drSubAccDetails in dtSubAccDetails.Rows)
+                                {
+                                    <h6>@drSubAccDetails["AccountName"].ToString()</h6>
+                                }
+                            }
+                            else
+                            {
+                                <CascadingValue Value=lstAccounts>
+                                    <CascadingValue Value="lstAccountIDs">
+                                        <ul class="nav flex-column">
+                                        <TreeCheckbox TItem="Account" IDCol=AccountID NameCol="AccountNameAr" NameEnCol="AccountNameEn" ParentIDCol="ParentID" NoCol="AccountNumber"
+                                                          IsMainCol="IsMain" ParentId="0" isNavMode=@isNavMode></TreeCheckbox>
+                                    </ul>
+                                    </CascadingValue>
+                                </CascadingValue>
+                            }
+                            
+                        </TabPage>
+                         @*Details Tab*@
+                        @if (clientSupplierObj != null && (subAccObj.SubAccountTypeID==3|| subAccObj.SubAccountTypeID==4||subAccObj.SubAccountTypeID==5 || subAccObj.SubAccountTypeID==7))
+                        {
+                            <TabPage Text="@localizer["TabDetails"]" IsAdded="true">
+                                <div class="form-inline row">
+                                    <label id="Tel" class="@GlobalVariables.LabelClass col-sm-2">@localizer["Tel"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="Tel" type="text" @bind-value=clientSupplierObj.Tel readonly="@isNavMode" />
+                                    </div>
+                                    <label id="ClientSupplierNo" class="@GlobalVariables.LabelClass col-sm-2">@localizer["ClientSupplierNo"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="ClientSupplierNo" type="text" @bind-value=clientSupplierObj.ClientSupplierNo readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="Fax" class="@GlobalVariables.LabelClass col-sm-2">@localizer["Fax"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm " aria-labelledby="Fax" type="text" @bind-value=clientSupplierObj.Fax readonly="@isNavMode" />
+                                    </div>
+                                    <label id="TitleID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["TitleID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="TitleID" @bind="clientSupplierObj.TitleID" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (var item in lstTitles)
+                                            {
+                                                <option value="@item.TitleID"> @(systemSettings.IsArabic ? item.TitleNameAr : item.TitleNameEn)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="Mobile" class="@GlobalVariables.LabelClass col-sm-2">@localizer["Mobile"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="Mobile" type="text" @bind-value=clientSupplierObj.Mobile readonly="@isNavMode" />
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label id="IsDiscountTax" class=@GlobalVariables.LabelClass>@localizer["IsDiscountTax"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="IsDiscountTax" type="checkbox" checked="@(bool.Parse(clientSupplierObj.IsDiscountTax.ToString()))" @bind-value=clientSupplierObj.IsDiscountTax readonly="@isNavMode" />
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label id="IsAddedTax" class=@GlobalVariables.LabelClass>@localizer["IsAddedTax"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="IsAddedTax" type="checkbox" checked="@(bool.Parse(clientSupplierObj.IsAddedTax.ToString()))" @bind-value=clientSupplierObj.IsAddedTax readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="EMail" class="@GlobalVariables.LabelClass col-sm-2">@localizer["EMail"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="EMail" type="email" @bind-value=clientSupplierObj.EMail readonly="@isNavMode" />
+                                    </div>
+                                    <label id="CreditLimit" class="@GlobalVariables.LabelClass col-sm-2">@localizer["CreditLimit"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="CreditLimit" type="number" @bind-value=clientSupplierObj.CreditLimit readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="BirthDate" class="@GlobalVariables.LabelClass col-sm-2">@localizer["BirthDate"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="BirthDate" type="date" @bind-value=clientSupplierObj.BirthDate readonly="@isNavMode" />
+                                    </div>
+                                    <label id="DiscountPercentage" class="@GlobalVariables.LabelClass col-sm-2">@localizer["DiscountPercentage"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="DiscountPercentage" type="number" @bind-value=clientSupplierObj.DiscountPercentage readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="CityID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["CityID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="CityID" @onchange="@(e => cboCityValueChanged(int.Parse(e.Value.ToString())))" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (var item in lstCities)
+                                            {
+                                                <option value="@item.CityID"> @(systemSettings.IsArabic ? item.CityNameAr : item.CityNameEn)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <label id="DiscountPercentageAfterTax" class="@GlobalVariables.LabelClass col-sm-2">@localizer["DiscountPercentageAfterTax"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="DiscountPercentageAfterTax" type="number" @bind-value=clientSupplierObj.DiscountPercentageAfterTax readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="AreaID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["AreaID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="AreaID" @bind="clientSupplierObj.AreaID" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (var item in lstAreas)
+                                            {
+                                                <option value="@item.AreaID"> @(systemSettings.IsArabic ? item.AreaNameAr : item.AreaNameEn)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <label id="BlanksProductionDiscountPercentage" class="@GlobalVariables.LabelClass col-sm-2">@localizer["BlanksProductionDiscountPercentage"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="BlanksProductionDiscountPercentage" type="number" @bind-value=clientSupplierObj.BlanksProductionDiscountPercentage readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="BuildingNumber" class="@GlobalVariables.LabelClass col-sm-2">@localizer["BuildingNumber"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="BuildingNumber" type="number" @bind-value=clientSupplierObj.BuildingNumber readonly="@isNavMode" />
+                                    </div>
+                                    <label id="PriceTypeID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["PriceTypeID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="PriceTypeID" @bind="clientSupplierObj.PriceTypeID" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (var item in lstPriceTypes)
+                                            {
+                                                <option value="@item.PriceTypeID"> @(systemSettings.IsArabic ? item.PriceNameAr : item.PriceNameEn)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="Address" class="@GlobalVariables.LabelClass col-sm-2">@localizer["Address"]</label>
+                                    <div class="col-sm-4">
+                                        <textarea class="@GlobalVariables.TabTextBoxClass" aria-labelledby="Address" rows="2" @bind=clientSupplierObj.Address readonly="@isNavMode" />
+                                    </div>
+                                    <label id="DefaultPaymentMethodID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["DefaultPaymentMethodID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="DefaultPaymentMethodID" @bind="clientSupplierObj.DefaultPaymentMethodID" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (var item in lstPaymentMethods)
+                                            {
+                                                <option value="@item.PaymentMethodID"> @(systemSettings.IsArabic ? item.PaymentMethodNameAr : item.PaymentMethodNameEn)</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label id="Notes" class="@GlobalVariables.LabelClass col-sm-2">@localizer["Notes"]</label>
+                                    <div class="col-sm-4">
+                                        <textarea class="@GlobalVariables.TabTextBoxClass " aria-labelledby="Notes" rows="2" @bind=clientSupplierObj.Notes readonly="@isNavMode" />
+                                    </div>
+                                    <label id="DefaultClientAccountID" class="@GlobalVariables.LabelClass col-sm-2" hidden="@(!IsClient)">@localizer["DefaultClientAccountID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="DefaultClientAccountID" @bind="clientSupplierObj.DefaultClientAccountID" disabled="@isNavMode" hidden="@(!IsClient)">
+                                            <option value="-1" hidden></option>
+                                            @foreach (DataRow item in dtSubAccDetails.Rows)
+                                            {
+                                                <option value="@item["AccountID"]"> @(item["AccountName"])</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="form-group col-sm-3">
+                                        <label id="ForAllBranches" class=@GlobalVariables.LabelClass>@localizer["ForAllBranches"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="ForAllBranches" type="checkbox" checked="@(bool.Parse(subAccObj.ForAllBranches.ToString()))" @bind-value=subAccObj.ForAllBranches readonly="@isNavMode" />
+                                    </div>
+                                    <div class="form-group col-sm-3">
+                                        <label id="IsActive" class=@GlobalVariables.LabelClass>@localizer["IsActive"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="IsActive" type="checkbox" checked="@(bool.Parse(clientSupplierObj.IsActive.ToString()))" @bind-value=clientSupplierObj.IsActive readonly="@isNavMode" />
+                                    </div>
+                                    <label id="DefaultSupplierAccountID" class="@GlobalVariables.LabelClass col-sm-2" hidden="@(!IsSupplier)">@localizer["DefaultSupplierAccountID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.TabComboboxClass" aria-labelledby="DefaultSupplierAccountID" @bind="clientSupplierObj.DefaultSupplierAccountID" disabled="@isNavMode" hidden="@(!IsSupplier)">
+                                            <option value="-1" hidden></option>
+                                            @foreach (DataRow item in dtSubAccDetails.Rows)
+                                            {
+                                                <option value="@item["AccountID"]"> @(item["AccountName"])</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label id="StopDate" class="@GlobalVariables.LabelClass col-sm-2">@localizer["StopDate"]</label>
+                                    <div class="col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass" aria-labelledby="StopDate" type="datetime-local" @bind-value=clientSupplierObj.StopDate readonly="@isNavMode" />
+                                    </div>
+                                    <label id="LineID" class="@GlobalVariables.LabelClass col-sm-2" hidden="@(!IsClient)">@localizer["LineID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.TabComboboxClass" aria-labelledby="LineID" @bind="clientSupplierObj.LineID" hidden="@(!IsClient)" disabled="@isNavMode">
+                                            <option value="-1" hidden></option>
+                                            @foreach (DataRow item in dtLines.Rows)
+                                            {
+                                                <option value="@item["LineID"]"> @(item["LineName"])</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabDetails"]" IsAdded="false"></TabPage>
+                        }
+                        @*SalesMan Tab*@
+                        @if (subAccObj.SubAccountTypeID == 2 || subAccObj.SubAccountTypeID == 7)
+                        {
+                            <TabPage Text="@localizer["TabSalesMan"]" IsAdded="true">
+                                <div class="form-inline row">
+                                    <div class="form-group col-sm-3">
+                                        <label id="IsSalesMan" class=@GlobalVariables.LabelClass>@localizer["IsSalesMan"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="IsSalesMan" type="checkbox" checked="@(bool.Parse(employeeObj.IsSalesMan.ToString()))" @bind-value=employeeObj.IsSalesMan disareadonlybled="@isNavMode" />
+                                    </div>
+                                    <label id="SalesManDefaultStoreID" class="@GlobalVariables.LabelClass col-sm-2">@localizer["SalesManDefaultStoreID"]</label>
+                                    <div class="col-sm-6">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="SalesManDefaultStoreID" @bind="employeeObj.SalesManDefaultStoreID" disabled="@(isNavMode|| !employeeObj.IsSalesMan)">
+                                            @* <option value="-1" hidden></option> *@
+                                            @{
+                                                DataView dvStores = new DataView(dtStores);
+                                                dvStores.RowFilter = " Locked = 0  And BranchID = " + (subAccObj.BranchID == null ? dtStores.Rows[0]["BranchID"].ToString() : subAccObj.BranchID.ToString());
+                                                DataTable dt = dvStores.ToTable();
+                                            }
+                                            @foreach (DataRow dr in dt.Rows)
+                                            {
+                                                <option value="@dr["StoreID"]"> @dr["StoreName"]</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-sm-6">
+                                        <label id="ForAllBranches" class=@GlobalVariables.LabelClass>@localizer["ForAllBranches"]</label>
+                                        <input class=@GlobalVariables.CheckboxClass aria-labelledby="ForAllBranches" type="checkbox" checked="@(bool.Parse(subAccObj.ForAllBranches.ToString()))" @bind-value=subAccObj.ForAllBranches readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabSalesMan"]" IsAdded="false">
+                            </TabPage>
+                        }
+                          @*Contacts Tab*@
+                         @if (subAccObj.SubAccountTypeID == 3 || subAccObj.SubAccountTypeID == 4 || subAccObj.SubAccountTypeID == 5 || subAccObj.SubAccountTypeID == 7)
+                        {
+                            <TabPage Text="@localizer["TabContacts"]" IsAdded="true">
+                                @if (lstContacts == null)
+                                {
+                                    <h3>Loading....</h3>
+                                }
+                                else
+                                {
+                                    if (currentState == GlobalVariables.States.NavMode)
+                                    {
+                                        <DataGrid @ref="gridComponentContacts" Items="@lstContacts" InvisibleColumns=ContactsInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                                    }
+                                    else
+                                    {
+                                        <EditableGrid TItem="SubAccountsClientSupplierContacts" itemsPerPage="10" Items="@lstContacts" InvisibleColumns=ContactsInvisibleColumns localizer=localizer valueLists=valueLists  />
+                                    }
+                                }
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabContacts"]" IsAdded="false">
+                            </TabPage>
+                        }
+                        @* Card Tab *@
+                        @if (subAccObj.SubAccountTypeID == 3 || subAccObj.SubAccountTypeID == 4 || subAccObj.SubAccountTypeID == 5 || subAccObj.SubAccountTypeID == 7)
+                        {
+                            <TabPage Text="@localizer["TabCards"]" IsAdded="true">
+                                @if (lstCards == null)
+                                {
+                                    <h3>Loading....</h3>
+                                }
+                                else
+                                {
+                                    if (currentState == GlobalVariables.States.NavMode)
+                                    {
+                                        <DataGrid @ref="gridComponentCards" Items="@lstCards" InvisibleColumns=CardsInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                                    }
+                                    else
+                                    {
+                                        <EditableGrid TItem="SubAccountsClientCards" itemsPerPage="10" Items="@lstCards" InvisibleColumns=CardsInvisibleColumns localizer=localizer valueLists=valueLists />
+                                    }
+                                }
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabCards"]" IsAdded="false">
+                            </TabPage>
+                        }
+                        @* Company Information *@
+                        @if (subAccObj.SubAccountTypeID == 3 || subAccObj.SubAccountTypeID == 4 || subAccObj.SubAccountTypeID == 5 || subAccObj.SubAccountTypeID == 7)
+                        {
+                            <TabPage Text="@localizer["TabCompanyInformation"]" IsAdded="true">
+                                <div class="form-inline row">
+                                    <label id="CompanyName" class="@GlobalVariables.LabelClass col-sm-2">@localizer["CompanyName"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="CompanyName" type="text" @bind-value=clientSupplierObj.CompanyName readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="CommercialRegistrationNo" class="@GlobalVariables.LabelClass col-sm-2">@localizer["CommercialRegistrationNo"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="CommercialRegistrationNo" type="text" @bind-value=clientSupplierObj.CommercialRegistrationNo readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="TaxNo" class="@GlobalVariables.LabelClass col-sm-2">@localizer["TaxNo"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="TaxNo" type="text" @bind-value=clientSupplierObj.TaxNo readonly="@isNavMode" />
+                                    </div>
+                                    <label id="EINVSubAccountTypeID" class="@GlobalVariables.LabelClass col-sm-2" hidden="@(!IsClient)">@localizer["EINVSubAccountTypeID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="EINVSubAccountTypeID" @bind="clientSupplierObj.EINVSubAccountTypeID" disabled="@isNavMode" >
+                                            <option value="-1" hidden></option>
+                                            @foreach (DataRow item in dtEINVSubAccountsTypes.Rows)
+                                            {
+                                                <option value="@item["EINVSubAccountTypeID"]"> @(item["EINVSubAccountTypeName"])</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="LicenseNo" class="@GlobalVariables.LabelClass col-sm-2">@localizer["LicenseNo"]</label>
+                                    <div class="form col-sm-4">
+                                        <input class="@GlobalVariables.TabTextBoxClass form-control-sm" aria-labelledby="LicenseNo" type="text" @bind-value=clientSupplierObj.LicenseNo readonly="@isNavMode" />
+                                    </div>
+                                </div>
+                                <div class="form-inline row">
+                                    <label id="EmployeeID" class="@GlobalVariables.LabelClass col-sm-2" >@localizer["EmployeeID"]</label>
+                                    <div class="col-sm-4">
+                                        <select class="@GlobalVariables.ComboboxClass form-select-sm" aria-labelledby="EmployeeID" @bind="clientSupplierObj.EmployeeID" disabled="@isNavMode" >
+                                            <option value="-1" hidden></option>
+                                            @foreach (DataRow item in dtSalesMan.Rows)
+                                            {
+                                                <option value="@item["SubAccountID"]" > @(item["SubAccountName"])</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabCompanyInformation"]" IsAdded="false">
+                            </TabPage>
+                        }
+                        @* Banks Tab *@
+                        @if (subAccObj.SubAccountTypeID == 3 || subAccObj.SubAccountTypeID == 4 || subAccObj.SubAccountTypeID == 5 || subAccObj.SubAccountTypeID == 7)
+                        {
+                            <TabPage Text="@localizer["TabBanks"]" IsAdded="true">
+                                @if (lstBanks == null)
+                                {
+                                    <h3>Loading....</h3>
+                                }
+                                else
+                                {
+                                    if (isNavMode)
+                                    {
+                                        <DataGrid @ref="gridComponentBanks" Items="@lstBanks" InvisibleColumns=BanksInvisibleColumns localizer=localizer valueLists=valueLists isNaveMode="@isNavMode" />
+                                    }
+                                    else
+                                    {
+                                        <EditableGrid TItem="SubAccountsClientSupplierBanks" itemsPerPage="10" Items="@lstBanks" InvisibleColumns=BanksInvisibleColumns localizer=localizer valueLists=valueLists />
+                                    }
+                                }
+                            </TabPage>
+                        }
+                        else
+                        {
+                            <TabPage Text="@localizer["TabBanks"]" IsAdded="false">
+                            </TabPage>
+                        }
+                        
+                    </TabControl>
+                </Tabs>
+            </TreeComponent>
+        </CascadingValue>
+    </CascadingValue>
+ }
