@@ -43,31 +43,31 @@
             <div class="row">
                 <div class="col-md-4 ">
                     <label>@localizer["CurrencyCode"]</label>
-                    <input @bind="layout.CurrentObject.CurrencyCode" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyCode" class="form-control" disabled="@(!IsEnabled)" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 ">
                     <label>@localizer["CurrencyNameAr"] </label>
-                    <input @bind="layout.CurrentObject.CurrencyNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyNameAr" class="form-control" disabled="@(!IsEnabled)" />
                 </div>
 
                 <div class="col-md-4  ">
                     <label>@localizer["CurrencyNameEn"]</label>
-                    <input @bind="layout.CurrentObject.CurrencyNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyNameEn" class="form-control" disabled="@(!IsEnabled)" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4  ">
                     <label>@localizer["ChangeNameAr"]</label>
-                    <input @bind="layout.CurrentObject.ChangeNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.ChangeNameAr" class="form-control" disabled="@(!IsEnabled)" />
                 </div>
 
                 <div class="col-md-4  ">
                     <label>@localizer["ChangeNameEn"]</label>
-                    <input @bind="layout.CurrentObject.ChangeNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.ChangeNameEn" class="form-control" disabled="@(!IsEnabled)" />
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                 <div class="col-md-4  ">
                     <label>@localizer["EINVCurrencyID"]</label>
                     <select class="form-select form-select-sm"
-                            @bind-value="layout.CurrentObject.EINVCurrencyID"
+                            @bind-value="base.CurrentObject.EINVCurrencyID"
                             @bind-value:event="onchange"
                             disabled="@(!IsEnabled)">
                         <option value="">@localizer["Select"]</option>

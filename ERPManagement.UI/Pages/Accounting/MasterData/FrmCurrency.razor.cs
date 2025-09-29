@@ -14,7 +14,7 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
     [Authorize(Roles = "ERP.Accounting.MasterData.frmCurrency")]
     public partial class FrmCurrency : PageLayoutComponent<Currency>
     {
-        private PageLayoutComponent<Currency> layout;
+        //private PageLayoutComponent<Currency> layout;
         private IButtonActions<Currency> myCustomActions;
         private IButtonNavigations<Currency> myCustomNavigations;
         private IGridHost<Currency> myCustomGrid;
@@ -71,14 +71,6 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
             {
                 invisibleColumns.Add("EINVCurrencyID");
             }
-            layout = new PageLayoutComponent<Currency>
-            {
-                OnInsert = InsertCurrency,
-                OnUpdate = UpdateCurrency,
-                OnDelete = DeleteCurrency
-                //,MapRowToModel = MapRowToCurrency
-            };
-            // ⬇️ ربط الدوال
             //OnInsert = model => currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(ConnectionString), false);
             //OnUpdate = model =>
             //{
@@ -87,10 +79,14 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
             //};
             //OnDelete = model =>
             //        {
-            //            currencyService.Delete(((Currency)(object) model).CurrencyID, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            //            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(ConnectionString), false);
             //            return true;
             //        };
-            //OnMapRowToModel = row => currencyService.MapRowToCurrency(row);
+
+            OnInsert = InsertCurrency;
+            OnUpdate = UpdateCurrency;
+            OnDelete = DeleteCurrency;
+
             FillData();
         }
         #endregion
@@ -108,7 +104,7 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
                     CurrencyID = -1
                 };
             }
-            layout.CurrentObject = currentObject;
+            base.CurrentObject = currentObject;
         }
 
         #endregion
