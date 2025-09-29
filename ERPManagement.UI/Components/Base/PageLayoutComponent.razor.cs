@@ -27,7 +27,7 @@ namespace ERPManagement.UI.Components.Base
         [Parameter] public IStringLocalizer Localizer { get; set; }
         [Parameter] public Dictionary<string, Dictionary<object, string>> ForeignKeyLookups { get; set; } = new();
         [Parameter] public RenderFragment BodyContent { get; set; }
-        [Parameter] public Func<DataRow, TModel> MapRowToModel { get; set; }
+        public Func<DataRow, TModel> MapRowToModel { get; set; }
 
         [Parameter] public EventCallback<DataRow> OnRowSelected { get; set; }
 
@@ -83,7 +83,14 @@ namespace ERPManagement.UI.Components.Base
             IsArabic = true;
         }
         #endregion
-
+        public async Task RowSelected(DataRow row)
+        {
+            StateHasChanged();
+        }
+        public async Task EditEntity()
+        {
+            StateHasChanged();
+        }
         #region Helpers
         public void Refresh()
         {

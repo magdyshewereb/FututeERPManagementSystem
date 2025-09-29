@@ -46,7 +46,7 @@ namespace ERPManagement.UI.Components.Base
             _page.IsEnabled = true;
             _page.State = FormState.Edit;
             _page.Refresh();
-            return Task.CompletedTask;
+            return _page.EditEntity;
         }
 
         public async Task DeleteEntity()

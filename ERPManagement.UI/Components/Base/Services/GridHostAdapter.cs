@@ -24,39 +24,26 @@ namespace ERPManagement.UI.Components.Base.Services
         public bool IsArabic => _page.IsArabic;
         public IStringLocalizer Localizer => _page.Localizer;
 
-        //public Task RowSelected(DataRow row)
-        //{
-        //    _page.State = FormState.View;
-        //    if (row != null)
-        //    {
-        //        if (_page.MapRowToModel != null)
-        //            _page.CurrentObject = _page.MapRowToModel(row);
-        //        _page.OldObject = (TModel)(_page.CurrentObject as ICloneable)?.Clone() ?? _page.CurrentObject;
-        //    }
-
-        //    return Task.CompletedTask;
-        //}
         public Task RowSelected(DataRow row)
         {
-            _page.SelectedRow = row; // لازم تحفظ الـ Row المختار
             _page.State = FormState.View;
-
             if (row != null)
             {
                 if (_page.MapRowToModel != null)
                     _page.CurrentObject = _page.MapRowToModel(row);
-
-                _page.OldObject = (_page.CurrentObject as ICloneable)?.Clone() is TModel clone
-                    ? clone
-                    : _page.CurrentObject;
-
-
+                _page.OldObject = (TModel)(_page.CurrentObject as ICloneable)?.Clone() ?? _page.CurrentObject;
             }
-            //InvokeAsync(StateHasChanged);
-            return _page.OnRowSelected.HasDelegate
-       ? _page.OnRowSelected.InvokeAsync(row)
-       : Task.CompletedTask;
+
+            return _page.RowSelected(row);
         }
+        //public Task RowSelected(DataRow row)
+        //{
+        //    _page.SelectedRow = row;
+        //    _page.State = FormState.View;
+
+        //    return _page.RowSelected(row);
+        //}
+
 
 
     }

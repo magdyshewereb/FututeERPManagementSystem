@@ -86,7 +86,7 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
             OnInsert = InsertCurrency;
             OnUpdate = UpdateCurrency;
             OnDelete = DeleteCurrency;
-
+            MapRowToModel = MapRowToCurrency;
             FillData();
         }
         #endregion
@@ -150,17 +150,17 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         //    return Task.CompletedTask;
         //}
         //#endregion
-        private Task HandleRowSelected(DataRow row)
-        {
-            //myCustomGrid.RowSelected(row);
-            if (row != null)
-            {
-                IsEnabled = false;
-                CurrentObject = currencyService.MapRowToCurrency(row);
-                OldObject = CurrentObject.Clone();
-            }
-            return Task.CompletedTask;
-        }
+        //private Task HandleRowSelected(DataRow row)
+        //{
+        //    if (row != null)
+        //    {
+        //        IsEnabled = false;
+        //        CurrentObject = currencyService.MapRowToCurrency(row);
+        //        OldObject = CurrentObject.Clone();
+        //    }
+        //    return Task.CompletedTask;
+        //}
+
 
         private int InsertCurrency(Currency model)
         {
