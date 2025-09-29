@@ -9,7 +9,7 @@ using System.Data;
 
 namespace ERPManagement.UI.Components.Base
 {
-    public partial class PageLayoutComponent<TModel> : ComponentBase
+    public partial class PageLayoutComponent<TModel> : ComponentBase, IEntityForm<TModel>
         where TModel : new()
     {
 
@@ -57,6 +57,7 @@ namespace ERPManagement.UI.Components.Base
         [Parameter] public IButtonActions<TModel>? ExternalActions { get; set; }
         [Parameter] public IButtonNavigations<TModel>? ExternalNavigations { get; set; }
         [Parameter] public IGridHost<TModel>? ExternalGrid { get; set; }
+
         #endregion
 
         #region Lifecycle
@@ -67,7 +68,8 @@ namespace ERPManagement.UI.Components.Base
             //NavigationsAdapter = new ButtonNavigationsAdapter<TModel>(this);
             //GridAdapter = new GridHostAdapter<TModel>(this);
 
-            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this, JS, ServiceProvider);
+            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this as IEntityForm<TModel>, JS, ServiceProvider);
+
             NavigationsAdapter = ExternalNavigations ?? new ButtonNavigationsAdapter<TModel>(this);
             GridAdapter = ExternalGrid ?? new GridHostAdapter<TModel>(this);
             CurrentObject = new TModel();
@@ -75,7 +77,8 @@ namespace ERPManagement.UI.Components.Base
             if (string.IsNullOrEmpty(ConnectionString))
             {
                 ConnectionString =
-                 "Server=sql-server,12355;Database=ERP_SS;User Id=sa;Password=;TrustServerCertificate=True;";
+                //"Server=sql-server,12355;Database=ERP_SS;User Id=sa;Password=;TrustServerCertificate=True;";
+                "Server=.,12355;Database=ERP_SS;User Id=sa;Password=magdy1986;TrustServerCertificate=True;";
             }
 
             CurrentBranchID = 1;
@@ -91,11 +94,15 @@ namespace ERPManagement.UI.Components.Base
         {
             StateHasChanged();
         }
+        //object IEntityForm<TModel>.SelectedRow { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
+
+        Action<TModel>? IEntityForm<TModel>.OnUpdate => throw new NotImplementedException();
         #region Helpers
-        public void Refresh()
-        {
-            InvokeAsync(StateHasChanged);
-        }
+        public Action Refresh => StateHasChanged;
+
+
         #endregion
 
     }
