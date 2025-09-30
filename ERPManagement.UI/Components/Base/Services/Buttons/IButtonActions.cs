@@ -2,7 +2,7 @@
 using ERPManagement.UI.GeneralClasses;
 using Microsoft.Extensions.Localization;
 
-namespace ERPManagement.UI.Components.Base.Services
+namespace ERPManagement.UI.Components.Base.Services.Buttons
 {
     public interface IButtonActions<TModel>
     {
@@ -10,7 +10,7 @@ namespace ERPManagement.UI.Components.Base.Services
         Task NewEntity();
         Task EditEntity();
         Task DeleteEntity();
-        Task SaveEntity();
+        Task<bool> SaveEntity();
         Task SaveAndCloseEntity();
         Task CancelEntity();
 

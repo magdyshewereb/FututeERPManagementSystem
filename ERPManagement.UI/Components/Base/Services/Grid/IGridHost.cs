@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Localization;
 using System.Data;
 
-namespace ERPManagement.UI.Components.Base.Services
+namespace ERPManagement.UI.Components.Base.Services.Grid
 {
     public interface IGridHost<TModel>
     {

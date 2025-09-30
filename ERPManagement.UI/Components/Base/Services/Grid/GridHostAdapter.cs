@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Localization;
 using System.Data;
 
-namespace ERPManagement.UI.Components.Base.Services
+namespace ERPManagement.UI.Components.Base.Services.Grid
 {
     public class GridHostAdapter<TModel> : IGridHost<TModel>
         where TModel : new()
@@ -36,13 +36,6 @@ namespace ERPManagement.UI.Components.Base.Services
 
             return _page.RowSelected(row);
         }
-        //public Task RowSelected(DataRow row)
-        //{
-        //    _page.SelectedRow = row;
-        //    _page.State = FormState.View;
-
-        //    return _page.RowSelected(row);
-        //}
 
 
 

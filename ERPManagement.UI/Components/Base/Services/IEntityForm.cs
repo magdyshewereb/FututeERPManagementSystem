@@ -9,20 +9,25 @@ namespace ERPManagement.UI.Components.Base.Services
     {
         FormState State { get; set; }
         bool IsEnabled { get; set; }
-        string FormName { get; }
-        bool IsArabic { get; }
-        HiddenButtonsConfig HiddenButtons { get; }
+        string FormName { get; set; }
+
+        bool IsArabic { get; set; }
+        HiddenButtonsConfig HiddenButtons { get; set; }
 
         TModel CurrentObject { get; set; }
+        TModel OldObject { get; set; }
         DataRow SelectedRow { get; set; }
 
         Action Refresh { get; }
         Func<TModel, int>? OnInsert { get; }
-        Action<TModel>? OnUpdate { get; }
+        Func<TModel, bool>? OnUpdate { get; }
         Func<TModel, bool>? OnDelete { get; }
-
+        public Func<TModel, string>? CheckBeforeDelete { get; }
+        public Func<DataRow, TModel> MapRowToModel { get; }
         DataTable? Data { get; set; }
         IStringLocalizer Localizer { get; }
+        List<string> ValidationErrors { get; set; }
+        int CurrentBranchID { get; set; }
     }
 
 }

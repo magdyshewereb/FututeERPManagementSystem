@@ -1,4 +1,4 @@
-﻿namespace ERPManagement.UI.Components.Base.Services
+﻿namespace ERPManagement.UI.Components.Base.Services.Buttons
 {
     public interface IButtonNavigations<TModel>
     {

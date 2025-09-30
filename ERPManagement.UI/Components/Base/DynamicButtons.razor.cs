@@ -1,4 +1,4 @@
-﻿using ERPManagement.UI.Components.Base.Services;
+﻿using ERPManagement.UI.Components.Base.Services.Buttons;
 using Microsoft.AspNetCore.Components;
 
 namespace ERPManagement.UI.Components.Base

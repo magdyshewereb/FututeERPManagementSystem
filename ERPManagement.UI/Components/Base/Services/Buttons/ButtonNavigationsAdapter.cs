@@ -1,7 +1,6 @@
-﻿using ERPManagement.UI.Components.Base.Services;
-using System.Data;
+﻿using System.Data;
 
-namespace ERPManagement.UI.Components.Base
+namespace ERPManagement.UI.Components.Base.Services.Buttons
 {
     public class ButtonNavigationsAdapter<TModel> : IButtonNavigations<TModel>
         where TModel : new()

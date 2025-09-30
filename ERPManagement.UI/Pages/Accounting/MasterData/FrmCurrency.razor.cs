@@ -1,5 +1,7 @@
 ﻿using ERPManagement.UI.Components.Base;
 using ERPManagement.UI.Components.Base.Services;
+using ERPManagement.UI.Components.Base.Services.Buttons;
+using ERPManagement.UI.Components.Base.Services.Grid;
 using ERPManagement.UI.DataModels.Accounting.MasterData.Currency;
 using ERPManagement.UI.DataModels.EInvoices;
 using ERPManagement.UI.DataModels.ProtectedLocalStorage;
@@ -26,14 +28,18 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         #endregion
 
         #region Private Fields
-        private Dictionary<string, Dictionary<object, string>>? fkLookups;
-        private string formName = string.Empty;
-        private List<string>? invisibleColumns;
-        private DataTable dtCurrencies = new();
+        //private Dictionary<string, Dictionary<object, string>>? fkLookups;
+        //private string formName = string.Empty;
+        //private List<string>? invisibleColumns = new();
+        //private DataTable dtCurrencies = new();
         private List<EINV_Currency> EINVcurrencies = new();
-        private bool isArabic;
-        private bool IsEnabled { get; set; }
-        UserLoginData userData { get; set; }
+        //private bool isArabic = true;
+        //protected string connectionString = string.Empty;
+        //protected int currentBranchID;
+        //protected int currentUserID;
+
+        //private bool IsEnabled { get; set; }
+        //UserLoginData userData { get; set; }
         private SystemSettings systemSettings { get; set; } = new();
         Currency currentObject;
         #endregion
@@ -41,52 +47,46 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         #region Lifecycle Methods
         protected override async Task OnInitializedAsync()
         {
-            //if (ConnectionString == null || ConnectionString == "")
-            //{
-            //    ConnectionString = await protectedLocalStorageService.GetConnectionStringAsync();
-            //}
-            //userData = await protectedLocalStorageService.GetUserDataAsync();
-            //systemSettings = await protectedLocalStorageService.GetSystemSettingsAsync();
-
-            myCustomActions = new ButtonActionsAdapter<Currency>(this, JS, ServiceProvider);
+            myCustomActions = new ButtonActionsAdapter<Currency>(this as IEntityForm<Currency>, JS, ServiceProvider);
             myCustomNavigations = new ButtonNavigationsAdapter<Currency>(this);
             myCustomGrid = new GridHostAdapter<Currency>(this);
 
             await base.OnInitializedAsync();
-            isArabic = IsArabic;
-            formName = localizer["Currencies"];
-            FormName = formName;
+            Localizer = localizer;
+            FormName = localizer["Currencies"];
 
-            invisibleColumns = new List<string> { "CurrencyID", "BranchID", "Deleted" };
+            InvisibleColumns = new List<string> { "CurrencyID", "BranchID", "Deleted" };
             HiddenButtons.HideCopy = HiddenButtons.HidePrint = HiddenButtons.HideAddRoot = true;
             if (GlobalVariables.IsEINV)
             {
-                EINVcurrencies = EcurrencyService.FillCombo(-1, true, new DataAccess.Main(ConnectionString), false);
-                fkLookups = new()
+                EINVcurrencies = EcurrencyService.FillCombo(-1, true, new DataAccess.Main(base.ConnectionString), false);
+                ForeignKeyLookups = new()
                 {
                     { "EINVCurrencyID", EINVcurrencies.ToDictionary(d => (object)d.EINVCurrencyID, d => d.EINVCurrencyName) }
                 };
             }
             else
             {
-                invisibleColumns.Add("EINVCurrencyID");
+                InvisibleColumns.Add("EINVCurrencyID");
             }
-            //OnInsert = model => currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            //OnInsert = model => currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(connectionString), false);
             //OnUpdate = model =>
             //{
-            //    currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            //    currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(connectionString), false);
             //    return true;
             //};
             //OnDelete = model =>
             //        {
-            //            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            //            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(connectionString), false);
             //            return true;
             //        };
 
             OnInsert = InsertCurrency;
             OnUpdate = UpdateCurrency;
             OnDelete = DeleteCurrency;
+            CheckBeforeDelete = CheckBeforeDeleteCurrency;
             MapRowToModel = MapRowToCurrency;
+
             FillData();
         }
         #endregion
@@ -94,8 +94,8 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         #region Data Loading
         private void FillData()
         {
-            dtCurrencies = currencyService.SelectDataTable(-1, "-1", true, new DataAccess.Main(ConnectionString), false);
-            Data = dtCurrencies;
+            Data = currencyService.SelectDataTable(-1, "-1", true, new DataAccess.Main(base.ConnectionString), false);
+
             if (currentObject == null)
             {
                 currentObject = new Currency
@@ -164,20 +164,20 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
 
         private int InsertCurrency(Currency model)
         {
-            currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(base.ConnectionString), false);
             return 1;
         }
 
         private bool UpdateCurrency(Currency model)
         {
-            currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(base.ConnectionString), false);
 
             return true;
         }
 
         private bool DeleteCurrency(Currency model)
         {
-            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(ConnectionString), false);
+            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(base.ConnectionString), false);
 
             return true;
         }
@@ -187,9 +187,9 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
             return currencyService.MapRowToCurrency(row);
         }
 
-        protected string CheckBeforeDelete(Currency entity)
+        protected string CheckBeforeDeleteCurrency(Currency model)
         {
-            if (GlobalVariables.LocalCurrencyID == entity.CurrencyID)
+            if (GlobalVariables.LocalCurrencyID == model.CurrencyID)
             {
                 return IsArabic ? "لا يمكن حذف العملة المحلية" : "You cannot delete the local currency.";
             }

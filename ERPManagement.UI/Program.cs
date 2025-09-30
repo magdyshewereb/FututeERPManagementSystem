@@ -1,4 +1,5 @@
 using ERPManagement.Application.Contracts.Infrastructure.Services;
+using ERPManagement.Infrastructure.Services;
 using ERPManagement.UI;
 using ERPManagement.UI.DataModels;
 using ERPManagement.UI.DataModels.Accounting.MasterData.Currency;
@@ -26,7 +27,6 @@ builder.Services.AddScoped<IValidator<Currency>, CurrencyValidator>();
 #endregion
 //Localization Container
 builder.Services.AddLocalization();
-
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     // You can set the default language using the following method:
@@ -34,6 +34,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
     options.AddSupportedCultures(new[] { "en", "ar" });
     options.AddSupportedUICultures(new[] { "en", "ar" });
 });
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<ILanguageService, LanguageService>();
 
 var app = await builder
     .ConfigureServices()

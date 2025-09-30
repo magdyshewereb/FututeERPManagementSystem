@@ -19,54 +19,48 @@
                    MapRowToModel="@currencyService.MapRowToCurrency"
                    OnRowSelected="HandleRowSelected"
                      OnCancelEntity="HandleCancel"
-                   OnEditEntity="HandleEdit"> *@
+                   OnEditEntity="HandleEdit"> 
+                   *@
 
 <PageLayoutComponent TModel="Currency"
-                     FormName="@formName"
-                     IsArabic="@isArabic"
-                     Data="@dtCurrencies"
-                     InvisibleColumns="@invisibleColumns"
-                     ForeignKeyLookups="@fkLookups"
-                     Localizer="@localizer" 
                      ExternalActions="@myCustomActions"
                      ExternalNavigations="@myCustomNavigations"
                      ExternalGrid="myCustomGrid"
-                      
                      >
  
   
        <BodyContent>
-        <CustomValidationSummary TModel="Currency" Errors="ValidationErrors" />
+        <CustomValidationSummary TModel="Currency" Errors="base.ValidationErrors" />
         <!-- your form UI bound to BasePage.CurrentObject -->
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-4 ">
                     <label>@localizer["CurrencyCode"]</label>
-                    <input @bind="base.CurrentObject.CurrencyCode" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyCode" class="form-control" disabled="@(!base.IsEnabled)" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4 ">
                     <label>@localizer["CurrencyNameAr"] </label>
-                    <input @bind="base.CurrentObject.CurrencyNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyNameAr" class="form-control" disabled="@(!base.IsEnabled)" />
                 </div>
 
                 <div class="col-md-4  ">
                     <label>@localizer["CurrencyNameEn"]</label>
-                    <input @bind="base.CurrentObject.CurrencyNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.CurrencyNameEn" class="form-control" disabled="@(!base.IsEnabled)" />
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-md-4  ">
                     <label>@localizer["ChangeNameAr"]</label>
-                    <input @bind="base.CurrentObject.ChangeNameAr" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.ChangeNameAr" class="form-control" disabled="@(!base.IsEnabled)" />
                 </div>
 
                 <div class="col-md-4  ">
                     <label>@localizer["ChangeNameEn"]</label>
-                    <input @bind="base.CurrentObject.ChangeNameEn" class="form-control" disabled="@(!IsEnabled)" />
+                    <input @bind="base.CurrentObject.ChangeNameEn" class="form-control" disabled="@(!base.IsEnabled)" />
                 </div>
             </div>
 
@@ -76,7 +70,7 @@
                     <select class="form-select form-select-sm"
                             @bind-value="base.CurrentObject.EINVCurrencyID"
                             @bind-value:event="onchange"
-                            disabled="@(!IsEnabled)">
+                            disabled="@(!base.IsEnabled)">
                         <option value="">@localizer["Select"]</option>
                         @foreach (var eINVCurrency in EINVcurrencies)
                         {

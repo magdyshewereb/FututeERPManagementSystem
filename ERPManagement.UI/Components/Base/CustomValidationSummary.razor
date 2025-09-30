@@ -19,21 +19,21 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Errors != null && Errors.Any())
-        {
-            foreach (var error in Errors)
-            {
-                await JS.InvokeVoidAsync("Swal.fire", new
-                {
-                    toast = true,
-                    position = "top-end",
-                    showConfirmButton = false,
-                    timer = 1000,
-                    icon = "error",
-                    title = error
-                });
-            }
-        }
+        // if (Errors != null && Errors.Any())
+        // {
+        //     foreach (var error in Errors)
+        //     {
+        //         await JS.InvokeVoidAsync("Swal.fire", new
+        //         {
+        //             toast = true,
+        //             position = "top-end",
+        //             showConfirmButton = false,
+        //             timer = 2000,
+        //             icon = "error",
+        //             title = error
+        //         });
+        //     }
+        // }
     }
 }
 

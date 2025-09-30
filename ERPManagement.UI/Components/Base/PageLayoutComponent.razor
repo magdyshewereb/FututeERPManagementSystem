@@ -19,7 +19,7 @@
 
 <div class="page-layout">
 
-
+     <CascadingValue Value="this">
     <DynamicButtons TModel="TModel"
                     BaseActions="@(ExternalActions )"
                     BaseNavigations="@(ExternalNavigations  )" />
@@ -28,6 +28,6 @@
         @BodyContent
  
     <DynamicGrid TModel="TModel" GridHost="@(ExternalGrid)" />
-
+    </CascadingValue>
 </div>
 

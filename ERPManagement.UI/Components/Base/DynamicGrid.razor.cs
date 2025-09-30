@@ -1,4 +1,4 @@
-﻿using ERPManagement.UI.Components.Base.Services;
+﻿using ERPManagement.UI.Components.Base.Services.Grid;
 using Microsoft.AspNetCore.Components;
 using System.Data;
 

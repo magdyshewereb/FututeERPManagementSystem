@@ -1,5 +1,4 @@
 ﻿using ERPManagement.UI.DataModels.ProtectedLocalStorage;
-using ERPManagement.UI.GeneralClasses;
 using System.Globalization;
 
 namespace ERPManagement.UI.Shared

@@ -431,3 +431,8 @@ body, .login-bg {
     padding-left: 20px; /* „”«›… œ«Œ·Ì… ⁄·‘«‰ Ì»«‰ «· œ—Ã */
 }
 /* End Tree design */
+
+ 
+    .close-btn button:hover {
+        transform: scale(1.1);
+    }

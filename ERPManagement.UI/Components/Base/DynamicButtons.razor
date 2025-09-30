@@ -72,8 +72,10 @@
             <div class="action-bar d-flex align-items-center">
                 <div class="flex-grow-1 px-1 d-flex rounded align-items-center"
                      id="FormName"
-                     style="background-color:#0c5baa;">
-                    <span class="fw-bolder fs-4 align-items-center" style="color:#ffc600; text-align :center">@FormName</span>
+                     style="background-color:#0c5baa; ">
+                    <label class="fw-bolder fs-4" style="color:#ffc600; text-align:center">
+                        @BaseActions.FormName
+                    </label>
                 </div>
                 <div class="col-auto px-1">
                     <button id="Close" class="btn erp-btn form-control" @onclick="Close">X</button>
