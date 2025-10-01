@@ -1,7 +1,7 @@
 ﻿using ERPManagement.Application.Contracts.Infrastructure.Services;
 using ERPManagement.Application.Shared.Enums;
 using ERPManagement.UI.Components.Base.Services;
-using ERPManagement.UI.Components.Base.Services.Buttons;
+using ERPManagement.UI.Components.Base.Services.Buttons.Actions;
 using ERPManagement.UI.GeneralClasses;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
@@ -11,10 +11,10 @@ using System.Text.Json;
 public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
     where TModel : new()
 {
-    private readonly IEntityForm<TModel> _form;
+    private readonly IEntityFormActions<TModel> _form;
     private readonly IJSRuntime _js;
     private readonly IServiceProvider _serviceProvider;
-    public ButtonActionsAdapter(IEntityForm<TModel> form, IJSRuntime js, IServiceProvider serviceProvider)
+    public ButtonActionsAdapter(IEntityFormActions<TModel> form, IJSRuntime js, IServiceProvider serviceProvider)
     {
         _form = form;
         _js = js;
@@ -112,7 +112,7 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
                     _form.Data?.AcceptChanges();
                     await ShowSuccessMessage("Update", "تم تعديل البيانات بنجاح", "Data updated successfully");
                 }
-
+                ClearControls();
                 _form.Refresh();
                 return true;
             }
@@ -127,9 +127,9 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
         bool saved = await SaveEntity();
         if (saved)
         {
-            ClearControls();
             _form.State = FormState.View;
             _form.IsEnabled = false;
+            _form.Refresh();// await _form.SaveAndCloseChangesAsync();
         }
     }
 
@@ -216,7 +216,7 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
             }
         }
     }
-    protected virtual void ClearControls()
+    private void ClearControls()
     {
         _form.CurrentObject = new TModel();
 

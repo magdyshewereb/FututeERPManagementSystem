@@ -5,8 +5,7 @@ namespace ERPManagement.UI.Components.Base
 {
     public partial class SearchColumnsSelector<TModel> : ComponentBase where TModel : new()
     {
-        [CascadingParameter] public PageLayoutComponent<TModel> BasePage { get; set; }
-        [Parameter] public List<string> Columns { get; set; } = new();
+        [Parameter] public List<string> DisplayedColumns { get; set; } = new();
         [Parameter] public List<string> InvisibleColumns { get; set; } = new();
         [Parameter] public List<string> SelectedColumns { get; set; } = new();
         [Parameter] public EventCallback<List<string>> SelectedColumnsChanged { get; set; }
@@ -16,9 +15,9 @@ namespace ERPManagement.UI.Components.Base
         private bool IsDropdownOpen { get; set; }
 
         private List<string> FilteredColumns =>
-            Columns.Where(c => string.IsNullOrEmpty(SearchText) ||
-                               c.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                   .ToList();
+            DisplayedColumns.Where(c => string.IsNullOrEmpty(SearchText) ||
+                                        c.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+                            .ToList();
 
         private void ToggleDropdown() => IsDropdownOpen = !IsDropdownOpen;
 
@@ -43,7 +42,7 @@ namespace ERPManagement.UI.Components.Base
 
         private async Task SelectAll()
         {
-            SelectedColumns = Columns.Except(BasePage.InvisibleColumns).ToList();
+            SelectedColumns = DisplayedColumns.Except(InvisibleColumns).ToList();
             await SelectedColumnsChanged.InvokeAsync(SelectedColumns);
         }
 
@@ -53,6 +52,6 @@ namespace ERPManagement.UI.Components.Base
             await SelectedColumnsChanged.InvokeAsync(SelectedColumns);
         }
     }
-    // Non-generic partial class so IStringLocalizer<DynamicButtons> can bind to resources
+
     public partial class SearchColumnsSelector { }
 }

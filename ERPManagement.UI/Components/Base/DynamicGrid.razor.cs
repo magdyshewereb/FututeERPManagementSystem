@@ -9,7 +9,9 @@ namespace ERPManagement.UI.Components.Base
         //[CascadingParameter] public PageLayoutComponent<TModel> GridHost { get; set; }
         [Parameter] public IGridHost<TModel> GridHost { get; set; }
         private string SearchText { get; set; } = string.Empty;
-        private List<string> SelectedSearchColumns { get; set; } = new();
+        //private List<string> SelectedSearchColumns { get; set; } = new();
+        private List<string> SelectedSearchColumns = new(); // يبدأ فاضي
+
         private string SortColumn { get; set; }
         private bool SortAscending { get; set; } = true;
 

@@ -16,7 +16,14 @@
             <!-- Column filter -->
             @if (GridHost?.Data != null && GridHost.Data.Columns.Count > 0)
             {
-                <SearchColumnsSelector TModel="TModel" Columns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
+@*                 <SearchColumnsSelector TModel="TModel" DisplayedColumns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
+                                       InvisibleColumns="GridHost.InvisibleColumns"
+                                       SelectedColumns="SelectedSearchColumns"
+                                       SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)"
+                                       Localizer="GridHost.Localizer" /> *@
+                <!-- Column filter -->
+                <SearchColumnsSelector TModel="TModel"
+                                       DisplayedColumns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
                                        InvisibleColumns="GridHost.InvisibleColumns"
                                        SelectedColumns="SelectedSearchColumns"
                                        SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)"

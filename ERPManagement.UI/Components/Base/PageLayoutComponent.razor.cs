@@ -1,6 +1,7 @@
 ﻿using ERPManagement.Application.Shared.Enums;
 using ERPManagement.UI.Components.Base.Services;
-using ERPManagement.UI.Components.Base.Services.Buttons;
+using ERPManagement.UI.Components.Base.Services.Buttons.Actions;
+using ERPManagement.UI.Components.Base.Services.Buttons.Navigations;
 using ERPManagement.UI.Components.Base.Services.Grid;
 using ERPManagement.UI.DataModels.ProtectedLocalStorage;
 using ERPManagement.UI.GeneralClasses;
@@ -11,7 +12,10 @@ using System.Data;
 
 namespace ERPManagement.UI.Components.Base
 {
-    public partial class PageLayoutComponent<TModel> : ComponentBase, IEntityForm<TModel>
+    public partial class PageLayoutComponent<TModel> : ComponentBase,
+        IEntityFormActions<TModel>,
+        IEntityFormNavigation<TModel>,
+        IEntityFormGrid<TModel>
         where TModel : new()
     {
 
@@ -71,13 +75,14 @@ namespace ERPManagement.UI.Components.Base
         protected override async Task OnInitializedAsync()
         {
             ////////////////// Connection & User Data /////////////////
-            //if (connectionString == null || connectionString == "")
+            //if (string.IsNullOrEmpty(ConnectionString))
             //{
-            //    connectionString = await protectedLocalStorageService.GetConnectionStringAsync();
+            //    ConnectionString = await protectedLocalStorageService.GetConnectionStringAsync();
             //}
-            //userData = await protectedLocalStorageService.GetUserDataAsync();
-            //systemSettings = await protectedLocalStorageService.GetSystemSettingsAsync();
+            //UserData = await protectedLocalStorageService.GetUserDataAsync();
+            //SystemSettings = await protectedLocalStorageService.GetSystemSettingsAsync();
             // IsArabic = systemSettings.IsArabic;
+
             if (string.IsNullOrEmpty(ConnectionString))
             {
                 ConnectionString =
@@ -89,19 +94,17 @@ namespace ERPManagement.UI.Components.Base
             IsArabic = true;
             /////////////////////////////////////////////////////////
             // Initialize Adapters 
-            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this as IEntityForm<TModel>, JS, ServiceProvider);
-            NavigationsAdapter = ExternalNavigations ?? new ButtonNavigationsAdapter<TModel>(this);
-            GridAdapter = ExternalGrid ?? new GridHostAdapter<TModel>(this);
-
+            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this as IEntityFormActions<TModel>, JS, ServiceProvider);
+            NavigationsAdapter = ExternalNavigations ?? new ButtonNavigationsAdapter<TModel>(this as IEntityFormNavigation<TModel>);
+            GridAdapter = ExternalGrid ?? new GridHostAdapter<TModel>(this as IEntityFormGrid<TModel>);
+            /////////////////////////////////////////////////////////
             CurrentObject = new TModel();
             OldObject = new TModel();
 
         }
         #endregion
-        public async Task RowSelected(DataRow row) => StateHasChanged();
-        public async Task EditEntity() => StateHasChanged();
 
-        public Action Refresh => StateHasChanged;
+        public Action Refresh => StateHasChanged; // Refresh the UI (UI Render)
 
 
     }

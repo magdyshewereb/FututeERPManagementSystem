@@ -1,6 +1,7 @@
 ﻿using ERPManagement.UI.Components.Base;
 using ERPManagement.UI.Components.Base.Services;
-using ERPManagement.UI.Components.Base.Services.Buttons;
+using ERPManagement.UI.Components.Base.Services.Buttons.Actions;
+using ERPManagement.UI.Components.Base.Services.Buttons.Navigations;
 using ERPManagement.UI.Components.Base.Services.Grid;
 using ERPManagement.UI.DataModels.Accounting.MasterData.Currency;
 using ERPManagement.UI.DataModels.EInvoices;
@@ -16,10 +17,10 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
     [Authorize(Roles = "ERP.Accounting.MasterData.frmCurrency")]
     public partial class FrmCurrency : PageLayoutComponent<Currency>
     {
-        //private PageLayoutComponent<Currency> layout;
-        private IButtonActions<Currency> myCustomActions;
-        private IButtonNavigations<Currency> myCustomNavigations;
-        private IGridHost<Currency> myCustomGrid;
+        private IButtonActions<Currency>? myCustomActions;
+        private IButtonNavigations<Currency>? myCustomNavigations;
+        private IGridHost<Currency>? myCustomGrid;
+
         #region Injected Services
         [Inject] public IStringLocalizer<FrmCurrency> localizer { get; set; } = default!;
         [Inject] public DataModels.Accounting.MasterData.Currency.CurrencyService currencyService { get; set; } = default!;
@@ -47,9 +48,9 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         #region Lifecycle Methods
         protected override async Task OnInitializedAsync()
         {
-            myCustomActions = new ButtonActionsAdapter<Currency>(this as IEntityForm<Currency>, JS, ServiceProvider);
-            myCustomNavigations = new ButtonNavigationsAdapter<Currency>(this);
-            myCustomGrid = new GridHostAdapter<Currency>(this);
+            myCustomActions = new ButtonActionsAdapter<Currency>(this as IEntityFormActions<Currency>, JS, ServiceProvider);
+            myCustomNavigations = new ButtonNavigationsAdapter<Currency>(this as IEntityFormNavigation<Currency>);
+            myCustomGrid = new GridHostAdapter<Currency>(this as IEntityFormGrid<Currency>);
 
             await base.OnInitializedAsync();
             Localizer = localizer;
@@ -69,18 +70,6 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
             {
                 InvisibleColumns.Add("EINVCurrencyID");
             }
-            //OnInsert = model => currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(connectionString), false);
-            //OnUpdate = model =>
-            //{
-            //    currencyService.Insert_Update(model, CurrentUserID, new DataAccess.Main(connectionString), false);
-            //    return true;
-            //};
-            //OnDelete = model =>
-            //        {
-            //            currencyService.Delete(((Currency)(object)model).CurrencyID, CurrentUserID, new DataAccess.Main(connectionString), false);
-            //            return true;
-            //        };
-
             OnInsert = InsertCurrency;
             OnUpdate = UpdateCurrency;
             OnDelete = DeleteCurrency;
@@ -108,58 +97,6 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         }
 
         #endregion
-
-        //#region CRUD Handlers
-        //private Task HandleNew()
-        //{
-        //    IsEnabled = true;
-        //    NewEntity();
-        //    return Task.CompletedTask;
-        //}
-
-        //private Task HandleEdit()
-        //{
-        //    IsEnabled = true;
-        //    EditEntity();
-
-        //    return Task.CompletedTask;
-        //}
-        //private Task HandleSave()
-        //{
-        //    if (SelectedRow == null)
-        //        return AddEntity();
-        //    else
-        //        return UpdateEntity();
-        //}
-        //private Task HandleSaveAndClose()
-        //{
-        //    IsEnabled = false;
-        //    HandleSave();
-        //    return SaveAndCloseEntity();
-        //}
-        //private Task HandleDelete()
-        //{
-        //    return DeleteEntity();
-        //}
-
-        //private Task HandleCancel()
-        //{
-        //    IsEnabled = false;
-        //    CancelEntity();
-
-        //    return Task.CompletedTask;
-        //}
-        //#endregion
-        //private Task HandleRowSelected(DataRow row)
-        //{
-        //    if (row != null)
-        //    {
-        //        IsEnabled = false;
-        //        CurrentObject = currencyService.MapRowToCurrency(row);
-        //        OldObject = CurrentObject.Clone();
-        //    }
-        //    return Task.CompletedTask;
-        //}
 
 
         private int InsertCurrency(Currency model)
