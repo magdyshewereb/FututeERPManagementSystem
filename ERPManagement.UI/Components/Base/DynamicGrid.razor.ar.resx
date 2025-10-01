@@ -129,4 +129,7 @@
   <data name="Previous" xml:space="preserve">
     <value>السابق</value>
   </data>
+  <data name="Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
 </root>

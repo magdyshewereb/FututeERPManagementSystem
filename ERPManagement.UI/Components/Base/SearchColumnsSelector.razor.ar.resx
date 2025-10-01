@@ -117,19 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="First" xml:space="preserve">
-    <value>First</value>
-  </data>
-  <data name="Last" xml:space="preserve">
-    <value>Last</value>
-  </data>
-  <data name="Next" xml:space="preserve">
-    <value>Next</value>
-  </data>
-  <data name="Previous" xml:space="preserve">
-    <value>Previous</value>
-  </data>
   <data name="Search" xml:space="preserve">
-    <value>Search ... </value>
+    <value>بحث</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>اختيار الكل</value>
+  </data>
+  <data name="UnselectAll" xml:space="preserve">
+    <value>إلغاء الكل</value>
   </data>
 </root>

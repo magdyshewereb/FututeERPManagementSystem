@@ -8,26 +8,28 @@
 {
     <div class="table-responsive">
 
-        <div class="d-flex mb-2">
+        <div class="d-flex">
             <!-- Search box -->
-            <input class="form-control me-2" placeholder="@GridHost.Localizer?["Search..."]"
-                   @bind="SearchText" />
+            <input class="form-control"
+                   style="width:225px; height:40px; margin:10px"
+                   placeholder="@localizer?["Search"]"
+                   @bind="SearchText"
+                   @bind:event="oninput"
+                   
+                   />
 
-            <!-- Column filter -->
+            <!-- Column filter  -->
             @if (GridHost?.Data != null && GridHost.Data.Columns.Count > 0)
-            {
-@*                 <SearchColumnsSelector TModel="TModel" DisplayedColumns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
-                                       InvisibleColumns="GridHost.InvisibleColumns"
-                                       SelectedColumns="SelectedSearchColumns"
-                                       SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)"
-                                       Localizer="GridHost.Localizer" /> *@
+            { 
                 <!-- Column filter -->
                 <SearchColumnsSelector TModel="TModel"
                                        DisplayedColumns="@(GridHost.Data.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList())"
                                        InvisibleColumns="GridHost.InvisibleColumns"
                                        SelectedColumns="SelectedSearchColumns"
-                                       SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)"
-                                       Localizer="GridHost.Localizer" />
+                                       SelectedColumnsChanged="@OnSelectedColumnsChanged"
+                                       Localizer="GridHost.Localizer"
+                                       IsArabic=GridHost.IsArabic/>
+           @* SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)" *@
             }
         </div>
 
@@ -39,7 +41,8 @@
                         <th style="width:50px;">#</th>
                         @foreach (DataColumn col in GridHost.Data.Columns.Cast<DataColumn>().Reverse())
                         {
-                            if (!GridHost.InvisibleColumns.Contains(col.ColumnName))
+                            if (!GridHost.InvisibleColumns.Contains(col.ColumnName) &&
+                            SelectedSearchColumns.Contains(col.ColumnName))
                             {
                                 <th @onclick="() => Sort(col.ColumnName)" style="cursor:pointer">
                                     @GridHost.Localizer?[col.ColumnName]
@@ -60,7 +63,8 @@
                             <td>@((_pageIndex * _pageSize) + row.index + 1)</td>
                             @foreach (DataColumn col in GridHost.Data.Columns.Cast<DataColumn>().Reverse())
                             {
-                                if (!GridHost.InvisibleColumns.Contains(col.ColumnName))
+                                if (!GridHost.InvisibleColumns.Contains(col.ColumnName) &&
+                                SelectedSearchColumns.Contains(col.ColumnName))
                                 {
                                     <td>@GetDisplayValue(row.data, col)</td>
                                 }
@@ -68,6 +72,7 @@
                         </tr>
                     }
                 </tbody>
+
             </table>
         </div>
     </div>
@@ -84,7 +89,7 @@
         </div>
 
         <nav>
-            <ul class="pagination pagination-sm mb-0">
+            <ul class="pagination pagination-sm mb-0"dir="@(GridHost.IsArabic ? "rtl" : "ltr")"> 
                 <li class="page-item @( _pageIndex == 0 ? "disabled" : "" )">
                     <button class="page-link" @onclick="FirstPage" title=@localizer["First"]>
                         @(GridHost.IsArabic ? "⏭️" : "⏮️")

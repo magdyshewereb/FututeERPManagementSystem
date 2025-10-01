@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 
 namespace ERPManagement.UI.Components.Base
 {
@@ -10,16 +11,29 @@ namespace ERPManagement.UI.Components.Base
         [Parameter] public List<string> SelectedColumns { get; set; } = new();
         [Parameter] public EventCallback<List<string>> SelectedColumnsChanged { get; set; }
         [Parameter] public IStringLocalizer Localizer { get; set; }
+        [Parameter] public bool IsArabic { get; set; }
 
         private string SearchText { get; set; } = string.Empty;
         private bool IsDropdownOpen { get; set; }
 
-        private List<string> FilteredColumns =>
-            DisplayedColumns.Where(c => string.IsNullOrEmpty(SearchText) ||
-                                        c.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-                            .ToList();
+        private ElementReference DropdownElement;
+        private IJSObjectReference? _module;
+        private IJSObjectReference? _outsideClickHandler;
 
-        private void ToggleDropdown() => IsDropdownOpen = !IsDropdownOpen;
+        [Inject] private IJSRuntime JS { get; set; }
+
+        //private List<string> FilteredColumns =>
+        //    DisplayedColumns.Where(c => string.IsNullOrEmpty(SearchText) ||
+        //                                c.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
+        //                    .ToList();
+        private List<string> FilteredColumns =>
+        DisplayedColumns
+        .Where(c => !InvisibleColumns.Contains(c)) // الأول نستبعد الأعمدة الغير مرئية
+        .Where(c => string.IsNullOrEmpty(SearchText) ||
+                    c.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) // بعدين نطبق الفلترة
+        .ToList();
+
+
 
         private async Task ToggleColumn(string col)
         {
@@ -33,10 +47,13 @@ namespace ERPManagement.UI.Components.Base
 
         private async Task RemoveColumn(string col)
         {
-            if (SelectedColumns.Contains(col))
+            if (SelectedColumns.Count > 1)
             {
-                SelectedColumns.Remove(col);
-                await SelectedColumnsChanged.InvokeAsync(SelectedColumns);
+                if (SelectedColumns.Contains(col))
+                {
+                    SelectedColumns.Remove(col);
+                    await SelectedColumnsChanged.InvokeAsync(SelectedColumns);
+                }
             }
         }
 
@@ -50,6 +67,44 @@ namespace ERPManagement.UI.Components.Base
         {
             SelectedColumns.Clear();
             await SelectedColumnsChanged.InvokeAsync(SelectedColumns);
+        }
+
+        private async Task ToggleDropdown()
+        {
+            IsDropdownOpen = !IsDropdownOpen;
+
+            if (IsDropdownOpen)
+            {
+                _module ??= await JS.InvokeAsync<IJSObjectReference>("import", "/js/dropdownHelper.js");
+
+                _outsideClickHandler = await _module.InvokeAsync<IJSObjectReference>(
+                    "registerOutsideClick", DropdownElement, DotNetObjectReference.Create(this));
+
+            }
+            else
+            {
+                if (_outsideClickHandler is not null)
+                {
+                    await _outsideClickHandler.InvokeVoidAsync("dispose");
+                    _outsideClickHandler = null;
+                }
+            }
+        }
+
+        [JSInvokable]
+        public Task CloseDropdown()
+        {
+            IsDropdownOpen = false;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_outsideClickHandler is not null)
+            {
+                await _outsideClickHandler.InvokeVoidAsync("dispose");
+            }
         }
     }
 

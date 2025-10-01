@@ -17,6 +17,11 @@ namespace ERPManagement.UI.Components.Base
 
         private int _pageIndex = 0;
         private int _pageSize = 10;
+        private void OnSearchChanged(ChangeEventArgs e)
+        {
+            SearchText = e.Value?.ToString() ?? string.Empty;
+            //ApplyFilter();
+        }
 
         private IEnumerable<DataRow> FilteredData
         {
@@ -164,7 +169,16 @@ namespace ERPManagement.UI.Components.Base
             }
 
         }
+        private Task OnSelectedColumnsChanged(List<string> cols)
+        {
+            // لازم يفضل عمود واحد على الأقل
+            if (cols == null || !cols.Any())
+                return Task.CompletedTask;
 
+            SelectedSearchColumns = cols;
+            StateHasChanged();
+            return Task.CompletedTask;
+        }
     }
 
     // Non-generic partial for localization resources

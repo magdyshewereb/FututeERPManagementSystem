@@ -313,6 +313,10 @@ body, .login-bg {
     color: #000 !important;
 }
 
+
+ 
+
+
 /* «·√⁄„œ… «··Ì „⁄„Ê·… Search Highlight */
 .highlight-col {
     background-color: #f0f8ff !important; /* √“—ﬁ ›« Õ ··Ê÷⁄ «·⁄«œÌ */
@@ -332,12 +336,11 @@ body, .login-bg {
 /* Start Buttons design */
 .action-bar {
     background: linear-gradient(90deg, #f8f9fa, #e9ecef);
-    padding: 15px 20px;
-
+    padding: 15px 20px 2px 15px;
 }
 
     .action-bar button {
-        border-radius: 8px;
+        border-radius: 4px;
         transition: all 0.2s ease-in-out;
     }
 
@@ -436,3 +439,11 @@ body, .login-bg {
     .close-btn button:hover {
         transform: scale(1.1);
     }
+/*.dropdown-rtl {
+    text-align: right;
+}
+
+.dropdown-ltr {
+    text-align: left;
+}
+*/
