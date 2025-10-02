@@ -1,21 +1,33 @@
 ﻿@typeparam TModel
-<div class="container-fluid">
-    <div class="row">
-        <div tree class="col-4 border-end" dir="@TreeDirection">
-            <input class="form-control mb-2"
-                   placeholder="@(TreeDirection == "rtl" ? "🔍 ابحث..." : "🔍 Search...")"
-                   value="@searchTerm"
-                   @oninput="OnSearch" />
-
-            @RenderTree()
-        </div>
-        <div class="col-8">
-            @RenderDetails()
-        </div>
-    </div>
-</div>
-
-
-
-
+@using System.Data
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@* @inject IStringLocalizer<DynamicTreeWithDetails> localizer *@
  
+
+@if (TreeHost?.Data != null)
+{
+    <div class="tree-container" dir="@(TreeHost.IsArabic ? "rtl" : "ltr")">
+        <ul>
+            @foreach (DataRow row in TreeHost.Data.Rows)
+            {
+                <li @onclick="() => SelectNode(row)">
+                    <span class="@((TModel)TreeHost.SelectedNode) == row ? "selected-node" : "")">
+                        @row["Name"]  @* ممكن تعدل العمود حسب بياناتك *@
+                    </span>
+                </li>
+            }
+        </ul>
+    </div>
+}
+
+@code {
+    private void SelectNode(DataRow row)
+    {
+        // تحويل DataRow لـ TModel (تقدر تستخدم Mapper أو Reflection)
+        var node = new TModel();
+        // TODO: Map DataRow → node
+        TreeHost.SelectedNode = node;
+        TreeHost.Refresh();
+    }
+}

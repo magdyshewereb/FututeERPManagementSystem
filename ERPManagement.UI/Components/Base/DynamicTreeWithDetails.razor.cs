@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ERPManagement.UI.Components.Base.Services.Tree;
+using Microsoft.AspNetCore.Components;
 
 namespace ERPManagement.UI.Components.Base
 {
-    public partial class DynamicTreeWithDetails<TModel> : ComponentBase
-
-         where TModel : new()
+    public partial class DynamicTreeWithDetails<TModel> where TModel : new()
     {
+
+        [Parameter] public ITreeHost<TModel> TreeHost { get; set; }
 
         [Parameter] public IEnumerable<TModel> Data { get; set; }
         [Parameter] public Func<TModel, object> GetId { get; set; }

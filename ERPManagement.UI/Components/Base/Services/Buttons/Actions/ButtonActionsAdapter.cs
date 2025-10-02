@@ -49,42 +49,48 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
 
     public async Task DeleteEntity()
     {
-        if (_form.CurrentObject == null || _form.OnDelete == null) return;
 
-        var result = await _js.InvokeAsync<JsonElement>("Swal.fire", new
+        if (_form.CurrentObject == null || _form.OnDelete == null || _form.SelectedRow == null)
         {
-            title = _form.IsArabic ? "هل أنت متأكد؟" : "Are you sure?",
-            text = _form.IsArabic ? "لن تستطيع التراجع!" : "You won’t be able to revert this!",
-            icon = "warning",
-            showCancelButton = true,
-            confirmButtonText = _form.IsArabic ? "نعم، احذف!" : "Yes, delete!",
-            cancelButtonText = _form.IsArabic ? "إلغاء" : "Cancel"
-        });
-
-        if (result.GetProperty("isConfirmed").GetBoolean())
+            await ShowErrorsMessage("برجاء اختيار عنصر", "Please Select Item");
+        }
+        else
         {
-            if (_form.CheckBeforeDelete != null)
+            var result = await _js.InvokeAsync<JsonElement>("Swal.fire", new
             {
-                var checkMessage = _form.CheckBeforeDelete(_form.CurrentObject);
-                if (!string.IsNullOrEmpty(checkMessage))
+                title = _form.IsArabic ? "هل أنت متأكد؟" : "Are you sure?",
+                text = _form.IsArabic ? "لن تستطيع التراجع!" : "You won’t be able to revert this!",
+                icon = "warning",
+                showCancelButton = true,
+                confirmButtonText = _form.IsArabic ? "نعم، احذف!" : "Yes, delete!",
+                cancelButtonText = _form.IsArabic ? "إلغاء" : "Cancel"
+            });
+
+            if (result.GetProperty("isConfirmed").GetBoolean())
+            {
+                if (_form.CheckBeforeDelete != null)
                 {
-                    await _js.InvokeVoidAsync("Swal.fire", new
+                    var checkMessage = _form.CheckBeforeDelete(_form.CurrentObject);
+                    if (!string.IsNullOrEmpty(checkMessage))
                     {
-                        icon = "error",
-                        title = _form.IsArabic ? "خطأ" : "Error",
-                        text = checkMessage,
-                    });
-                    return;
+                        await _js.InvokeVoidAsync("Swal.fire", new
+                        {
+                            icon = "error",
+                            title = _form.IsArabic ? "خطأ" : "Error",
+                            text = checkMessage,
+                        });
+                        return;
+                    }
                 }
-            }
-            var deleted = _form.OnDelete(_form.CurrentObject);
-            if (deleted)
-            {
-                await ShowSuccessMessage("Delete", "تم حذف البيانات بنجاح", "Data deleted successfully");
-                _form.Data?.Rows.Remove((DataRow)_form.SelectedRow);
-                _form.CurrentObject = new TModel();
-                _form.State = FormState.View;
-                _form.Refresh();
+                var deleted = _form.OnDelete(_form.CurrentObject);
+                if (deleted)
+                {
+                    await ShowSuccessMessage("Delete", "تم حذف البيانات بنجاح", "Data deleted successfully");
+                    _form.Data?.Rows.Remove((DataRow)_form.SelectedRow);
+                    _form.CurrentObject = new TModel();
+                    _form.State = FormState.View;
+                    _form.Refresh();
+                }
             }
         }
     }
@@ -150,6 +156,7 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
                     _form.OldObject = (TModel)(_form.CurrentObject as ICloneable)?.Clone() ?? _form.CurrentObject;
                 }
             }
+            ClearControls();
             _form.Refresh();
         }
     }
@@ -196,6 +203,19 @@ public class ButtonActionsAdapter<TModel> : IButtonActions<TModel>
             icon = "success",
             title = IsArabic ? action + " البيانات" : action + " data",
             text = IsArabic ? messageAr : messageEn
+        });
+    }
+    private async Task ShowErrorsMessage(string messageAr, string messageEn)
+    {
+        await _js.InvokeVoidAsync("Swal.fire", new
+        {
+
+            toast = true,
+            position = "top-end",
+            showConfirmButton = false,
+            timer = 2000,
+            icon = "error",
+            title = IsArabic ? messageAr : messageEn
         });
     }
     private async Task ShowErrorsMessage(List<string> errors)

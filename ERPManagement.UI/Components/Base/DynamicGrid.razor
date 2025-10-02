@@ -8,10 +8,11 @@
 {
     <div class="table-responsive">
 
-        <div class="d-flex">
-            <!-- Search box -->
+        <div class="d-flex mb-2 gap-2 row">
+            <div class="col-md-4 d-flex">
+            <!-- Search box width:225px;-->
             <input class="form-control"
-                   style="width:225px; height:40px; margin:10px"
+                   style=" height:40px; margin:10px"
                    placeholder="@localizer?["Search"]"
                    @bind="SearchText"
                    @bind:event="oninput"
@@ -27,10 +28,10 @@
                                        InvisibleColumns="GridHost.InvisibleColumns"
                                        SelectedColumns="SelectedSearchColumns"
                                        SelectedColumnsChanged="@OnSelectedColumnsChanged"
-                                       Localizer="GridHost.Localizer"
-                                       IsArabic=GridHost.IsArabic/>
+                                       Localizer="GridHost.Localizer" />
            @* SelectedColumnsChanged="@(cols => SelectedSearchColumns = cols)" *@
             }
+            </div>
         </div>
 
         <div dir="@(GridHost.IsArabic)">

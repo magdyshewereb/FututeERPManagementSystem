@@ -1,21 +1,45 @@
 ﻿@page "/frmCostCenterTree"
 @using ERPManagement.UI.DataModels.Accounting
+@using ERPManagement.UI.DataModels.Accounting.MasterData.CostCenter
 @using ERPManagement.UI.GeneralClasses
 @using ERPManagement.UI.DataModels.Accounting;
 @inject IStringLocalizer<FrmCostCenterTree> localizer;
-@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+ 
 @inject ERPManagement.UI.GeneralClasses.GlobalFunctions GlobalFunctions
 @inject IJSRuntime js
 @attribute [Authorize(Roles = "ERP.Accounting.MasterData.frmCostCenterTree")]
+@inherits GridLayoutComponent<CostCenter>
+ 
 
-<CascadingValue Value="currentObject"  Name="currentObj">
-    <CascadingValue Value="selectedNode" Name="selectedObj">
-    <TreeComponent TItem="CostCenter" Tlevel="CostCenterLevel" IDCol="@IDCol" NoCol="@NoCol" NameCol="@NameCol" NameEnCol="@NameEnCol" IsMainCol="@IsMainCol"
-               ParentIDCol="@ParentIDCol" ItemLevelCol="@ItemLevelCol" TableName="@TableName" LevelsCol="@LevelsCol" LevelsTable="@LevelsTable" LevelsWidthCol="@LevelsWidthCol"
-                    hiddenButtons="@hiddenButtons" invisibleColumns="@invisibleColumns" 
-                       OnClearControlsCallback="ClearControls" OnDisplayDataCallback="DisplayData" OnSetControlsCallback="SetControls" OnCboValueChangedCallBack="cboCountiesValueChanges"
-                       TreeAddDataFun="TreeAddData" OnDeleteCallBack="TreeDeleteData" TreeUpdateDataFun="TreeUpdateData" OnCancelCallBack="Cancel" localizer="@localizer">
-        </TreeComponent>
-    </CascadingValue>
- </CascadingValue>
- @*valueLists="@valueLists"*@
+<DynamicTree TModel="CostCenter"
+             Data="costCenters"
+             GetId="x => x.CostCenterID"
+             GetParentId="x => x.ParentID"
+             GetNum = "x => x.CostCenterNumber"
+             GetText="x => x.CostCenterNameAr">
+
+    <ChildContent Context="acc">
+        <!-- your form UI bound to BasePage.CurrentObject -->
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label>@localizer["CostCenterNumber"]</label>
+                    <input @bind="@acc.CostCenterNumber" class="form-control" disabled="@(!base.IsEnabled)" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 ">
+                    <label>@localizer["CostCenterNameAr"] </label>
+                    <input @bind="@acc.CostCenterNameAr" class="form-control" disabled="@(!base.IsEnabled)" />
+                </div>
+
+                <div class="col-md-4  ">
+                    <label>@localizer["CostCenterNameEn"]</label>
+                    <input @bind="@acc.CostCenterNameEn" class="form-control" disabled="@(!base.IsEnabled)" />
+                </div>
+
+            </div>
+
+        </div>
+    </ChildContent>
+</DynamicTree>

@@ -52,12 +52,12 @@
                                                 : (MarkupString)"<i class='bi bi-skip-backward-fill'></i>")
                         </button>
                         <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.PreviousEntity" title=@localizer["Previous"]>
-                            @(IsArabic ? (MarkupString)"<i class='bi bi-arrow-right-circle'></i>"
-                                                : (MarkupString)"<i class='bi bi-arrow-left-circle'></i>")
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-caret-right'></i>"
+                                                : (MarkupString)"<i class='bi bi-caret-left'></i>")
                         </button>
                         <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.NextEntity" title=@localizer["Next"]>
-                            @(IsArabic ? (MarkupString)"<i class='bi bi-arrow-left-circle'></i>"
-                                                : (MarkupString)"<i class='bi bi-arrow-right-circle'></i>")
+                            @(IsArabic ? (MarkupString)"<i class='bi bi-caret-left'></i>"
+                                                : (MarkupString)"<i class='bi bi-caret-right'></i>")
                         </button>
                         <button class="btn btn-no-border text-dark" @onclick="BaseNavigations.LastEntity" title=@localizer["Last"]>
                             @(IsArabic ? (MarkupString)"<i class='bi bi-skip-backward-fill'></i>"

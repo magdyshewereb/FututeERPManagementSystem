@@ -1,19 +1,17 @@
 ﻿@typeparam TModel
+<DynamicButtons TModel="TModel" />
+<div class="container-fluid">
+    <div class="row">
+        <div tree class="col-4 border-end" dir="@TreeDirection">
+            <input class="form-control mb-2"
+                   placeholder="@(TreeDirection == "rtl" ? "🔍 ابحث..." : "🔍 Search...")"
+                   value="@searchTerm"
+                   @oninput="OnSearch" />
 
-<ul class="tree">
-    @if (TreeNodes != null)
-    {
-        @foreach (var node in TreeNodes.Where(n => n.ParentId == null))
-        {
-            <li>
-                <span @onclick="() => HandleNodeClick(node)">
-                    @node.Text
-                </span>
-                @if (node.Children?.Any() == true)
-                {
-                    <DynamicTreeNodes TModel="TModel" Nodes="node.Children" OnNodeClick="OnNodeClick" />
-                }
-            </li>
-        }
-    }
-</ul>
+            @RenderTree()
+        </div>
+        <div class="col-8">
+            @RenderDetails()
+        </div>
+    </div>
+</div>

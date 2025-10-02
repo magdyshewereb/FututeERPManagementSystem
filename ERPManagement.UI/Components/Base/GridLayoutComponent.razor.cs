@@ -12,7 +12,7 @@ using System.Data;
 
 namespace ERPManagement.UI.Components.Base
 {
-    public partial class PageLayoutComponent<TModel> : ComponentBase,
+    public partial class GridLayoutComponent<TModel> : ComponentBase,
         IEntityFormActions<TModel>,
         IEntityFormNavigation<TModel>,
         IEntityFormGrid<TModel>
@@ -20,9 +20,8 @@ namespace ERPManagement.UI.Components.Base
     {
 
         #region Injections & Parameters
-        [Inject] private IServiceProvider ServiceProvider { get; set; }
+        [Inject] protected IServiceProvider _ServiceProvider { get; set; }
         [Inject] protected IJSRuntime JS { get; set; }
-
         [Parameter] public string FormName { get; set; }
         [Parameter] public bool IsArabic { get; set; }
         [Parameter] public FormState State { get; set; } = FormState.View;
@@ -44,7 +43,7 @@ namespace ERPManagement.UI.Components.Base
         public DataRow? SelectedRow { get; set; }
         public TModel CurrentObject { get; set; }
         public TModel OldObject { get; set; }
-        public List<string> Errors { get; set; } = new();
+        //public List<string> Errors { get; set; } = new();
         public List<string> ValidationErrors { get; set; } = new();
 
         //List<string> IEntityForm<TModel>.ValidationErrors { get => Errors; set => Errors = value; }
@@ -94,7 +93,7 @@ namespace ERPManagement.UI.Components.Base
             IsArabic = true;
             /////////////////////////////////////////////////////////
             // Initialize Adapters 
-            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this as IEntityFormActions<TModel>, JS, ServiceProvider);
+            ActionsAdapter = ExternalActions ?? new ButtonActionsAdapter<TModel>(this as IEntityFormActions<TModel>, JS, _ServiceProvider);
             NavigationsAdapter = ExternalNavigations ?? new ButtonNavigationsAdapter<TModel>(this as IEntityFormNavigation<TModel>);
             GridAdapter = ExternalGrid ?? new GridHostAdapter<TModel>(this as IEntityFormGrid<TModel>);
             /////////////////////////////////////////////////////////

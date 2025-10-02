@@ -3,6 +3,7 @@
 @using ERPManagement.UI.DataModels.Accounting
 @using ERPManagement.UI.DataModels.Accounting;
 @using ERPManagement.UI.DataModels.Accounting.MasterData
+@using ERPManagement.UI.DataModels.Accounting.MasterData.CostCenter
 @using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
 @using ERPManagement.UI.DataModels.Defaults
 @using ERPManagement.UI.DataModels.Privilege
@@ -10,7 +11,7 @@
 @inject ERPManagement.UI.DataModels.Accounting.AccountService accountService
 @inject ERPManagement.UI.DataModels.Accounting.SubAccountsService subAccountsService
 @inject CurrencyService currencyService;
-@inject ERPManagement.UI.DataModels.Accounting.CostCenterService costCenterService
+@inject CostCenterService costCenterService
 @inject ERPManagement.UI.DataModels.Accounting.JVService jvService
 @inject ERPManagement.UI.DataModels.Accounting.JVDetailsService jvDetailService
 @inject ERPManagement.UI.DataModels.Accounting.FiscalYearService fiscalYearService

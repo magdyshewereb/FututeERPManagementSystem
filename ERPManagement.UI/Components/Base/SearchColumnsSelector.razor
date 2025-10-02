@@ -4,50 +4,15 @@
 <div class="dropdown" @ref="DropdownElement">
 
     <button class="btn btn-outline-primary text-start" 
-            style="width:168px;margin-top:11px; height:40px;"
+            style="margin-top:11px; height:40px;;"
             type="button"
-            @onclick="ToggleDropdown">
-            @localizer["Select"]
+            @onclick="ToggleDropdown">  
+       @*  <i class="bi bi-list-check"></i>  *@
+        <i class="bi bi-ui-checks"></i>
     </button>
 
     @if (IsDropdownOpen)
     {
-       @*  <ul class="dropdown-menu show p-2 @(IsArabic ? "dropdown-rtl" : "dropdown-ltr")"
-            style="max-height:150px;width:250px; overflow:auto;"
-            dir="@(IsArabic ? "rtl" : "ltr")">
-            <!-- البحث -->
-            <li class="mb-2">
-                <input type="text"
-                       class="form-control form-control-sm w-100 h-25"
-                       placeholder="@localizer["Search"]"
-                       @bind="SearchText"
-                       @bind:event="oninput" />
-            </li>
-
-            <!-- Select/Unselect -->
-            <li class="d-flex justify-content-between mb-2">
-                <button type="button" class="btn btn-sm btn-success me-1" @onclick="SelectAll">@localizer["SelectAll"]</button>
-                <button type="button" class="btn btn-sm btn-danger" @onclick="UnselectAll">@localizer["UnselectAll"]</button>
-            </li>
-
-            <!-- الأعمدة -->
-            @foreach (var col in FilteredColumns.ToList().AsEnumerable().Reverse())
-            {
-                if (!InvisibleColumns.Contains(col))
-                {
-                    <li>
-                        <label class="form-check-label w-100 d-flex @(IsArabic ? "justify-content-end" : "justify-content-start")">
-                            <input type="checkbox"
-                                   class="form-check-input "
-                                   value="@col"
-                                   checked="@SelectedColumns.Contains(col)"
-                                   @onchange="() => ToggleColumn(col)" />
-                            @Localizer?[col]
-                        </label>
-                    </li>
-                }
-            }
-        </ul> *@
         <ul class="dropdown-menu show p-2"
             style="max-height:150px;width:250px; overflow:auto;"
             dir="@(IsArabic ? "rtl" : "ltr")">

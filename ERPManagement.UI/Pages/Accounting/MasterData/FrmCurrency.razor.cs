@@ -15,7 +15,7 @@ using System.Data;
 namespace ERPManagement.UI.Pages.Accounting.MasterData
 {
     [Authorize(Roles = "ERP.Accounting.MasterData.frmCurrency")]
-    public partial class FrmCurrency : PageLayoutComponent<Currency>
+    public partial class FrmCurrency : GridLayoutComponent<Currency>
     {
         private IButtonActions<Currency>? myCustomActions;
         private IButtonNavigations<Currency>? myCustomNavigations;
@@ -25,7 +25,7 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         [Inject] public IStringLocalizer<FrmCurrency> localizer { get; set; } = default!;
         [Inject] public DataModels.Accounting.MasterData.Currency.CurrencyService currencyService { get; set; } = default!;
         [Inject] public ERPManagement.UI.DataModels.EInvoices.CurrencyService EcurrencyService { get; set; } = default!;
-        [Inject] private IServiceProvider ServiceProvider { get; set; }
+        // [Inject] private IServiceProvider ServiceProvider { get; set; }
         #endregion
 
         #region Private Fields
@@ -48,7 +48,7 @@ namespace ERPManagement.UI.Pages.Accounting.MasterData
         #region Lifecycle Methods
         protected override async Task OnInitializedAsync()
         {
-            myCustomActions = new ButtonActionsAdapter<Currency>(this as IEntityFormActions<Currency>, JS, ServiceProvider);
+            myCustomActions = new ButtonActionsAdapter<Currency>(this as IEntityFormActions<Currency>, JS, _ServiceProvider);
             myCustomNavigations = new ButtonNavigationsAdapter<Currency>(this as IEntityFormNavigation<Currency>);
             myCustomGrid = new GridHostAdapter<Currency>(this as IEntityFormGrid<Currency>);
 

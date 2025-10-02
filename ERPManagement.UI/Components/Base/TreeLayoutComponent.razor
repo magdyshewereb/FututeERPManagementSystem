@@ -1,0 +1,13 @@
+﻿@typeparam TModel
+<div class="page-layout">
+    <CascadingValue Value="this" IsFixed="true">
+        <DynamicButtons TModel="TModel"
+                        BaseActions="@(ExternalActions)" />
+
+        <DynamicTreeWithDetails TModel="TModel" TreeHost="@ExternalTree"/>
+
+        @BodyContent
+    </CascadingValue>
+</div>
+ 
+

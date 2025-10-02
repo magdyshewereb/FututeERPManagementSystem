@@ -1,6 +1,6 @@
 ﻿@page "/frmCurrency"
-@inherits PageLayoutComponent<Currency>
-@inject IJSRuntime js
+@inherits GridLayoutComponent<Currency>
+ 
 @using ERPManagement.UI.DataModels.Accounting.MasterData.Currency
  
 
@@ -22,7 +22,7 @@
                    OnEditEntity="HandleEdit"> 
                    *@
 
-<PageLayoutComponent TModel="Currency"
+<GridLayoutComponent TModel="Currency"
                      ExternalActions="@myCustomActions"
                      ExternalNavigations="@myCustomNavigations"
                      ExternalGrid="myCustomGrid"
@@ -82,4 +82,4 @@
         </div>
     </BodyContent>
  
-</PageLayoutComponent>
+</GridLayoutComponent>

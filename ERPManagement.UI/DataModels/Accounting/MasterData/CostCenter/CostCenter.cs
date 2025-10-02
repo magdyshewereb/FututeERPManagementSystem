@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using Microsoft.Data.SqlClient;
 using ERPManagement.UI.DataAccess;
-namespace ERPManagement.UI.DataModels.Accounting
+namespace ERPManagement.UI.DataModels.Accounting.MasterData.CostCenter
 {
 public class CostCenter
 {

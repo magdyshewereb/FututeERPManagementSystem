@@ -22,18 +22,25 @@ namespace ERPManagement.UI.Components.Base
 
         [Inject] private IJSRuntime JS { get; set; }
 
+
         //private List<string> FilteredColumns =>
-        //    DisplayedColumns.Where(c => string.IsNullOrEmpty(SearchText) ||
-        //                                c.Contains(SearchText, StringComparison.OrdinalIgnoreCase))
-        //                    .ToList();
+        // DisplayedColumns
+        //.Where(c => !InvisibleColumns.Contains(c)) // استبعاد الأعمدة الغير مرئية
+        //.Where(c => string.IsNullOrEmpty(SearchText) ||
+        //            (Localizer?[c]?.Value ?? c)
+        //                .Contains(SearchText, StringComparison.OrdinalIgnoreCase)) // البحث في الاسم المعروض
+        //.ToList();
+
         private List<string> FilteredColumns =>
-        DisplayedColumns
-        .Where(c => !InvisibleColumns.Contains(c)) // الأول نستبعد الأعمدة الغير مرئية
-        .Where(c => string.IsNullOrEmpty(SearchText) ||
-                    c.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) // بعدين نطبق الفلترة
+    DisplayedColumns
+        .Where(c => !InvisibleColumns.Contains(c)) // استبعاد الأعمدة الغير مرئية
+        .Where(c =>
+        {
+            var displayName = Localizer?[c]?.Value ?? c; // الاسم المعروض
+            return string.IsNullOrEmpty(SearchText) ||
+                   displayName.IndexOf(SearchText, StringComparison.CurrentCultureIgnoreCase) >= 0;
+        })
         .ToList();
-
-
 
         private async Task ToggleColumn(string col)
         {
